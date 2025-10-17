@@ -18,3 +18,9 @@ Si es tu primera vez corriendo en tu maquina este proyecto debes de ejcutar el c
 ```shell
 flutter pub get
 ```
+
+Adicional a lo anterior, necesitas generas los archivos autogenerados de la libreria AutoRoute con la ayuda de los `build_runner`, para ello vas a ejecutar el comando:
+
+```shell
+flutter packages pub run build_runner build --delete-conflicting-outputs
+```
