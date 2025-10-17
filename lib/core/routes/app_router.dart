@@ -6,5 +6,6 @@ class AppRouter extends RootStackRouter {
   @override
   final List<AutoRoute> routes = [
     AutoRoute(page: HomeRoute.page, initial: true),
+    AutoRoute(page: StudyBotRoute.page),
   ];
 }

@@ -53,6 +53,116 @@ class S {
   static S? maybeOf(BuildContext context) {
     return Localizations.of<S>(context, S);
   }
+
+  /// `The request has been processed successfully`
+  String get solicitudProcesada {
+    return Intl.message(
+      'The request has been processed successfully',
+      name: 'solicitudProcesada',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The request has been processed successfully, and the resource has been created`
+  String get solicitudProcesadaCreada {
+    return Intl.message(
+      'The request has been processed successfully, and the resource has been created',
+      name: 'solicitudProcesadaCreada',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The request cannot be processed`
+  String get solicitudNoProcesada {
+    return Intl.message(
+      'The request cannot be processed',
+      name: 'solicitudNoProcesada',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You do not have authorization to make this request`
+  String get noAutorizacion {
+    return Intl.message(
+      'You do not have authorization to make this request',
+      name: 'noAutorizacion',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Query not getting executed`
+  String get consultaNoRealizada {
+    return Intl.message(
+      'Query not getting executed',
+      name: 'consultaNoRealizada',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The request is not allowed`
+  String get solicitudNoPermitida {
+    return Intl.message(
+      'The request is not allowed',
+      name: 'solicitudNoPermitida',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The request is unacceptable`
+  String get solicitudNoAceptada {
+    return Intl.message(
+      'The request is unacceptable',
+      name: 'solicitudNoAceptada',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The request could not be completed due to a conflict in the request`
+  String get solicitudConflicto {
+    return Intl.message(
+      'The request could not be completed due to a conflict in the request',
+      name: 'solicitudConflicto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The requested resource is no longer on the server`
+  String get recursoNoDisponible {
+    return Intl.message(
+      'The requested resource is no longer on the server',
+      name: 'recursoNoDisponible',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The server is temporarily unavailable`
+  String get errorServidor {
+    return Intl.message(
+      'The server is temporarily unavailable',
+      name: 'errorServidor',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unknown error`
+  String get errorDesconocido {
+    return Intl.message(
+      'Unknown error',
+      name: 'errorDesconocido',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

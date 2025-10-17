@@ -1,1 +1,13 @@
-{}
+{
+    "solicitudProcesada": "La solicitud se ha procesado correctamente",
+    "solicitudProcesadaCreada": "La solicitud se ha procesado correctamente y el recurso ha insertado creado",
+    "solicitudNoProcesada": "La solicitud no puede ser procesada",
+    "noAutorizacion": "No tienes autorización para realizar esta petición",
+    "consultaNoRealizada": "Consulta no realizada",
+    "solicitudNoPermitida": "La solicitud no está permitida",
+    "solicitudNoAceptada": "La solicitud no es aceptable",
+    "solicitudConflicto": "La solicitud no se pudo completar debido a un conflicto en la solicitud",
+    "recursoNoDisponible": "El recurso solicitado ya no está en el servidor",
+    "errorServidor": "El servidor no está temporalmente disponible",
+    "errorDesconocido": "Error desconocido"
+}

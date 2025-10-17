@@ -1,1 +1,13 @@
-{}
+{
+    "solicitudProcesada": "The request has been processed successfully",
+    "solicitudProcesadaCreada": "The request has been processed successfully, and the resource has been created",
+    "solicitudNoProcesada": "The request cannot be processed",
+    "noAutorizacion": "You do not have authorization to make this request",
+    "consultaNoRealizada": "Query not getting executed",
+    "solicitudNoPermitida": "The request is not allowed",
+    "solicitudNoAceptada": "The request is unacceptable",
+    "solicitudConflicto": "The request could not be completed due to a conflict in the request",
+    "recursoNoDisponible": "The requested resource is no longer on the server",
+    "errorServidor": "The server is temporarily unavailable",
+    "errorDesconocido": "Unknown error"
+}

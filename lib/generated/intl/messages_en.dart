@@ -21,5 +21,37 @@ class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
   final messages = _notInlinedMessages(_notInlinedMessages);
-  static Map<String, Function> _notInlinedMessages(_) => <String, Function>{};
+  static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "consultaNoRealizada": MessageLookupByLibrary.simpleMessage(
+      "Query not getting executed",
+    ),
+    "errorDesconocido": MessageLookupByLibrary.simpleMessage("Unknown error"),
+    "errorServidor": MessageLookupByLibrary.simpleMessage(
+      "The server is temporarily unavailable",
+    ),
+    "noAutorizacion": MessageLookupByLibrary.simpleMessage(
+      "You do not have authorization to make this request",
+    ),
+    "recursoNoDisponible": MessageLookupByLibrary.simpleMessage(
+      "The requested resource is no longer on the server",
+    ),
+    "solicitudConflicto": MessageLookupByLibrary.simpleMessage(
+      "The request could not be completed due to a conflict in the request",
+    ),
+    "solicitudNoAceptada": MessageLookupByLibrary.simpleMessage(
+      "The request is unacceptable",
+    ),
+    "solicitudNoPermitida": MessageLookupByLibrary.simpleMessage(
+      "The request is not allowed",
+    ),
+    "solicitudNoProcesada": MessageLookupByLibrary.simpleMessage(
+      "The request cannot be processed",
+    ),
+    "solicitudProcesada": MessageLookupByLibrary.simpleMessage(
+      "The request has been processed successfully",
+    ),
+    "solicitudProcesadaCreada": MessageLookupByLibrary.simpleMessage(
+      "The request has been processed successfully, and the resource has been created",
+    ),
+  };
 }
