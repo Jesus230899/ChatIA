@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:chatia/core/failure/operation_failure.dart';
+import 'package:chatia/features/studybot/data/models/gemini_chat_model.dart';
+import 'package:chatia/features/studybot/data/models/gemini_message_model.dart';
 import 'package:chatia/features/studybot/domain/usecases/ask_gemini_usecase.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
@@ -22,8 +24,25 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
     AskGeminiEvent event,
     Emitter<StudybotState> emit,
   ) async {
-    emit(state.copyWith(loading: true, message: ''));
-    final result = await askGeminiUseCase(event.question);
+    // log('Entra en _onAskGeminiEvent');
+    emit(state.copyWith(loading: true));
+    GeminiChatModel? currentChat = state.chat.fold(() => null, (r) => r);
+    // log('El current chat es null? ${currentChat == null}');
+    final newMessage = GeminiMessageModel(
+      isUser: true,
+      message: event.question,
+      date: DateTime.now(),
+    );
+    if (currentChat != null) {
+      currentChat = currentChat.copyWith(
+        contents: [...currentChat.contents, newMessage],
+      );
+    }
+    final updatedChat = currentChat ?? GeminiChatModel(contents: [newMessage]);
+
+
+    final result = await askGeminiUseCase(updatedChat);
+
     result.fold(
       (failure) {
         emit(
@@ -37,7 +56,7 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
         emit(
           state.copyWith(
             loading: false,
-            message: response,
+            chat: some(response),
             askGeminiResult: some(right(response)),
           ),
         );

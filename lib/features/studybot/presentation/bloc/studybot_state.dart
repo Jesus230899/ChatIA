@@ -2,31 +2,28 @@ part of 'studybot_bloc.dart';
 
 class StudybotState extends Equatable {
   final bool loading;
-  final String message;
-  final Option<Either<OperationFailure, String>> askGeminiResult;
+  final Option<GeminiChatModel> chat;
+  final Option<Either<OperationFailure, GeminiChatModel>> askGeminiResult;
 
   const StudybotState({
     required this.loading,
-    required this.message,
+    required this.chat,
     required this.askGeminiResult,
   });
 
   StudybotState copyWith({
     bool? loading,
-    String? message,
-    Option<Either<OperationFailure, String>>? askGeminiResult,
+    Option<GeminiChatModel>? chat,
+    Option<Either<OperationFailure, GeminiChatModel>>? askGeminiResult,
   }) => StudybotState(
     loading: loading ?? this.loading,
-    message: message ?? this.message,
+    chat: chat ?? this.chat,
     askGeminiResult: askGeminiResult ?? this.askGeminiResult,
   );
 
-  factory StudybotState.initial() => StudybotState(
-    loading: false,
-    message: '',
-    askGeminiResult: none(),
-  );
+  factory StudybotState.initial() =>
+      StudybotState(loading: false, chat: none(), askGeminiResult: none());
 
   @override
-  List<Object> get props => [loading, message, askGeminiResult];
+  List<Object> get props => [loading, chat, askGeminiResult];
 }

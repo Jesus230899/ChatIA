@@ -1,6 +1,7 @@
 import 'package:chatia/core/injection/base_injection.dart';
+import 'package:chatia/features/studybot/data/datasources/remote/gemini_remote_datasource.dart';
+import 'package:chatia/features/studybot/data/datasources/remote/gemini_remote_datasource_impl.dart';
 import 'package:chatia/features/studybot/data/repositories/studybot_repository_impl.dart';
-import 'package:chatia/features/studybot/data/services/gemini_service.dart';
 import 'package:chatia/features/studybot/domain/repositories/studybot_repository.dart';
 import 'package:chatia/features/studybot/domain/usecases/ask_gemini_usecase.dart';
 import 'package:chatia/features/studybot/presentation/bloc/studybot_bloc.dart';
@@ -25,16 +26,18 @@ Future<void> initStudybotInjection() async {
 
   // Repositorios
   getIt.registerLazySingleton<StudybotRepository>(
-    () => StudybotRepositoryImpl(geminiService: getIt()),
+    () => StudybotRepositoryImpl(geminiDatasource: getIt()),
   );
 
-  // Servicios
-  getIt.registerLazySingleton<GeminiService>(() => GeminiService());
+  // Datasources
+  getIt.registerLazySingleton<GeminiRemoteDatasource>(
+    () => GeminiRemoteDatasourceImpl(),
+  );
 }
 
 void unRegisterInjections() {
   removeRegistrationIfExist<StudybotBloc>();
   removeRegistrationIfExist<AskGeminiUseCase>();
   removeRegistrationIfExist<StudybotRepository>();
-  removeRegistrationIfExist<GeminiService>();
+  removeRegistrationIfExist<GeminiRemoteDatasource>();
 }

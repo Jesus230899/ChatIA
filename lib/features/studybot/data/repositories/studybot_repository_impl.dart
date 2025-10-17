@@ -1,16 +1,17 @@
 import 'package:chatia/core/failure/operation_failure.dart';
-import 'package:chatia/features/studybot/data/services/gemini_service.dart';
+import 'package:chatia/features/studybot/data/datasources/remote/gemini_remote_datasource.dart';
+import 'package:chatia/features/studybot/data/models/gemini_chat_model.dart';
 import 'package:chatia/features/studybot/domain/repositories/studybot_repository.dart';
 import 'package:dartz/dartz.dart';
 
 class StudybotRepositoryImpl extends StudybotRepository {
-  final GeminiService geminiService;
-  StudybotRepositoryImpl({required this.geminiService});
+  final GeminiRemoteDatasource geminiDatasource;
+  StudybotRepositoryImpl({required this.geminiDatasource});
 
   @override
-  Future<Either<OperationFailure, String>> askGemini({
-    required String prompt,
+  Future<Either<OperationFailure, GeminiChatModel>> askGemini({
+    required GeminiChatModel chat,
   }) async {
-    return await geminiService.askGemini(prompot: prompt);
+    return await geminiDatasource.askGemini(chat: chat);
   }
 }

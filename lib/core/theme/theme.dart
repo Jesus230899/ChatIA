@@ -5,7 +5,8 @@ import 'colors.dart';
 
 class AppTheme {
   static ThemeData appTheme = ThemeData(
-    textTheme: GoogleFonts.openSansTextTheme(),
+    textTheme: GoogleFonts.openSansTextTheme(
+    ),
     textSelectionTheme: const TextSelectionThemeData(
       cursorColor: AppColors.primary,
     ),
