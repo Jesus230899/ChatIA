@@ -1,6 +1,11 @@
+import 'package:animate_do/animate_do.dart';
+import 'package:chatia/core/resources/resource_icons.dart';
 import 'package:chatia/core/theme/colors.dart';
 import 'package:chatia/core/utils/text_cleanners.dart';
+import 'package:chatia/features/studybot/data/models/gemini_message_model.dart';
 import 'package:chatia/features/studybot/presentation/bloc/studybot_bloc.dart';
+import 'package:chatia/features/widgets/jumping_dot_loader_widget.dart';
+import 'package:chatia/features/widgets/message_chat_widget.dart';
 import 'package:flutter/material.dart';
 
 class StudybotChatView extends StatefulWidget {
@@ -33,16 +38,7 @@ class _StudybotChatViewState extends State<StudybotChatView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // if (widget.bloc.state.loading)
-          //   Expanded(
-          //     child: Center(child: const CircularProgressIndicator.adaptive()),
-          //   )
-          // else
-          _messages(),
-
-          _textInput(),
-        ],
+        children: [_messages(), _textInput()],
       ),
     );
   }
@@ -50,66 +46,26 @@ class _StudybotChatViewState extends State<StudybotChatView> {
   Widget _messages() {
     final chat = widget.bloc.state.chat.fold(() => null, (a) => a);
     if (chat == null) {
-      return const SizedBox.shrink();
+      return _emptyChat();
     }
+
+    // if (widget.bloc.state.loadingMessage) {
+    //   chat.contents.add(
+    //     GeminiMessageModel(isUser: false, message: 'Pensando...'),
+    //   );
+    // }
     return Expanded(
       child: ListView.separated(
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
         reverse: true,
         itemCount: chat.contents.reversed.length,
-        itemBuilder: (_, index) => _message(
-          chat.contents.reversed.toList()[index].isUser,
-          chat.contents.reversed.toList()[index].message,
+        itemBuilder: (_, index) => MessageChatWidget(
+          message: chat.contents.reversed.toList()[index].message,
+          isUser: chat.contents.reversed.toList()[index].isUser,
+          size: size,
         ),
         separatorBuilder: (_, index) => const SizedBox(height: 10),
-      ),
-    );
-  }
-
-  Widget _message(bool isUser, String message) {
-    return Align(
-      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Column(
-        crossAxisAlignment: isUser
-            ? CrossAxisAlignment.end
-            : CrossAxisAlignment.start,
-        children: [
-          Text(
-            isUser ? 'Tú' : 'StudyBot',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: AppColors.icon,
-              fontSize: 12,
-            ),
-          ),
-          const SizedBox(height: 5),
-          _messageContainer(isUser, message),
-        ],
-      ),
-    );
-  }
-
-  Widget _messageContainer(bool isUser, String message) {
-    return Container(
-      constraints: BoxConstraints(maxWidth: size.width * 0.7),
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: isUser ? AppColors.primary : AppColors.message,
-        borderRadius: BorderRadius.only(
-          topLeft: const Radius.circular(10),
-          topRight: const Radius.circular(10),
-          bottomLeft: isUser
-              ? const Radius.circular(10)
-              : const Radius.circular(0),
-          bottomRight: isUser
-              ? const Radius.circular(0)
-              : const Radius.circular(10),
-        ),
-      ),
-      child: Text(
-        getTextFromPrompt(prompt: message) ?? message,
-        style: TextStyle(color: isUser ? Colors.white : Colors.black),
       ),
     );
   }
@@ -127,18 +83,36 @@ class _StudybotChatViewState extends State<StudybotChatView> {
   }
 
   Widget _textField() {
+    final radius = 30.0;
     return Expanded(
       child: TextField(
+        style: TextStyle(fontSize: 12),
         controller: _textController,
-        decoration: InputDecoration(
-          hintText: 'Escribe tu pregunta...',
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 15,
-            vertical: 10,
-          ),
-        ),
+        decoration: _fieldDecoration(radius),
       ),
+    );
+  }
+
+  InputDecoration _fieldDecoration(double radius) {
+    return InputDecoration(
+      fillColor: Colors.grey.shade300,
+      filled: true,
+      hintText: 'Escribe tu pregunta...',
+      hintStyle: TextStyle(fontSize: 12),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(radius),
+        borderSide: BorderSide(color: Colors.grey.shade300),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(radius),
+        borderSide: BorderSide(color: Colors.grey.shade300),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(radius),
+        borderSide: BorderSide(color: Colors.grey.shade300),
+      ),
+
+      contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
     );
   }
 
@@ -156,6 +130,31 @@ class _StudybotChatViewState extends State<StudybotChatView> {
         radius: 23,
         backgroundColor: AppColors.primary,
         child: const Icon(Icons.arrow_right_alt_sharp, color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _emptyChat() {
+    return Expanded(
+      child: FadeIn(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(60),
+              child: Image.asset(
+                ResourceIcons.studyIcon,
+                width: 100,
+                height: 100,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              '🌟 ¡Hey! Soy StudyBot, el robot más curioso del universo 🤖 ¿Listo para descubrir algo increíble sobre la ciencia? ¡Pregúntame lo que quieras!',
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

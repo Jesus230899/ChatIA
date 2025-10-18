@@ -24,30 +24,49 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
     AskGeminiEvent event,
     Emitter<StudybotState> emit,
   ) async {
-    // log('Entra en _onAskGeminiEvent');
-    emit(state.copyWith(loading: true));
+    emit(state.copyWith(loadingMessage: true));
+    // Obtener el chat actual
     GeminiChatModel? currentChat = state.chat.fold(() => null, (r) => r);
-    // log('El current chat es null? ${currentChat == null}');
+
+    // Formular el mensaje recibido por el usuario dentro del estado
     final newMessage = GeminiMessageModel(
       isUser: true,
       message: event.question,
       date: DateTime.now(),
     );
+    // Formular mensaje temporal de Pensando...
+    final thinkingMessage = GeminiMessageModel(
+      isUser: false,
+      message: 'Pensando...',
+      date: DateTime.now(),
+    );
+    // Actualizar el chat actual con el nuevo mensaje del usuario
     if (currentChat != null) {
       currentChat = currentChat.copyWith(
         contents: [...currentChat.contents, newMessage],
       );
     }
-    final updatedChat = currentChat ?? GeminiChatModel(contents: [newMessage]);
-
-
+    // Si no hay chat actual, crear uno nuevo con el mensaje del usuario
+    final updatedChat =
+        currentChat ?? GeminiChatModel.createNew(contents: [newMessage]);
+    // Emitir el estado con el chat actualizado mostrando el mensaje del usuario y el mensaje de Pensando...
+    emit(
+      state.copyWith(
+        chat: some(
+          updatedChat.copyWith(
+            contents: [...updatedChat.contents, thinkingMessage],
+          ),
+        ),
+      ),
+    );
+    // Llamar al caso de uso para obtener la respuesta de Gemini
     final result = await askGeminiUseCase(updatedChat);
 
     result.fold(
       (failure) {
         emit(
           state.copyWith(
-            loading: false,
+            loadingMessage: false,
             askGeminiResult: optionOf(left(failure)),
           ),
         );
@@ -55,7 +74,7 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
       (response) {
         emit(
           state.copyWith(
-            loading: false,
+            loadingMessage: false,
             chat: some(response),
             askGeminiResult: some(right(response)),
           ),

@@ -73,9 +73,9 @@ class _StudyBotScreenState extends State<StudyBotScreen>
         child: TabBar(
           controller: _tabController,
           tabs: [
-            Tab(icon: Icon(Icons.chat)),
-            Tab(icon: Icon(Icons.info)),
-            Tab(icon: Icon(Icons.settings)),
+            Tab(icon: Icon(Icons.chat), text: 'Chat'),
+            Tab(icon: Icon(Icons.info), text: 'Contenido'),
+            Tab(icon: Icon(Icons.settings), text: 'Perfil'),
           ],
         ),
       ),

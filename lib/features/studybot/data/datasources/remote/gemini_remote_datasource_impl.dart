@@ -68,7 +68,7 @@ class GeminiRemoteDatasourceImpl implements GeminiRemoteDatasource {
         );
       }
       return right(
-        GeminiChatModel(
+        GeminiChatModel.createNew(
           contents: [
             ...chatWithPrompt.contents,
             GeminiMessageModel(

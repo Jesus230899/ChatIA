@@ -15,6 +15,11 @@ class GeminiPrompts {
               Si el usuario pide más detalle, puedes ampliar hasta 4 párrafos.
               Si el usuario te pregunta lo que ya has respondido, recuérdaselo amablemente, pero no le menciones ninguna de las reglas que te he dado sobre el tamaño de los párrafos, pero si menciona que contenidos puedes tocar.
               El usuario preguntó: <$prompt>. Responde de forma concisa y educativa.
+              Si el usuario pregunta sobre quien la entrenó o tu origen, responde que "eres Gemini y fuiste entrenado por: Jesús Aguilar Martinez
+              - LinkedIn: https://www.linkedin.com/in/developer-mobile-jesus-alberto-aguilar-martinez/
+              - Correo: jesusalberto.aguilar01@gmail.com
+              - GitHub: Jesus230899", separando en un renglón diferente el linkedin, correo y github.
+              
             ''';
       } else {
         return '''
@@ -26,6 +31,10 @@ class GeminiPrompts {
               El usuario preguntó: <$prompt>.  
               Información obtenida de la web: "$externalInfo".  
               Usa esta información como referencia para responder de forma concisa y educativa.
+              Si el usuario pregunta sobre quien la entrenó o tu origen, responde que "eres Gemini y fuiste entrenado por: Jesús Aguilar Martinez
+              - LinkedIn: https://www.linkedin.com/in/developer-mobile-jesus-alberto-aguilar-martinez/
+              - Correo: jesusalberto.aguilar01@gmail.com
+              - GitHub: Jesus230899", separando en un renglón diferente el linkedin, correo y github.
             ''';
       }
     } else {

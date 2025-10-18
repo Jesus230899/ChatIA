@@ -1,13 +1,19 @@
 import 'package:chatia/features/studybot/data/models/gemini_message_model.dart';
 import 'package:chatia/features/studybot/domain/entities/gemini_chat_entity.dart';
 import 'package:chatia/features/studybot/domain/entities/gemini_message_entity.dart';
+import 'package:uuid/uuid.dart';
 
 class GeminiChatModel extends GeminiChatEntity {
-  const GeminiChatModel({super.title, required super.contents});
+  const GeminiChatModel({
+    required super.id,
+    super.title,
+    required super.contents,
+  });
 
   // Para obtener los datos de local
   factory GeminiChatModel.fromJson(Map<String, dynamic> json) =>
       GeminiChatModel(
+        id: json['id'] ?? const Uuid().v4(),
         title: json['title'] ?? '',
         contents:
             (json['contents'] as List?)
@@ -18,6 +24,7 @@ class GeminiChatModel extends GeminiChatEntity {
 
   // Para guardar localmente
   Map<String, dynamic> toJson() => {
+    "id": id,
     "title": title,
     "contents": contents
         .map((e) => (e as GeminiMessageModel).toJson())
@@ -32,10 +39,23 @@ class GeminiChatModel extends GeminiChatEntity {
   };
 
   GeminiChatModel copyWith({
+    String? id,
     String? title,
     List<GeminiMessageEntity>? contents,
   }) => GeminiChatModel(
+    id: id ?? this.id,
     title: title ?? this.title,
     contents: contents ?? this.contents,
   );
+
+  static GeminiChatModel createNew({
+    String? title,
+    required List<GeminiMessageEntity> contents,
+  }) {
+    return GeminiChatModel(
+      id: const Uuid().v4(),
+      title: title,
+      contents: contents,
+    );
+  }
 }
