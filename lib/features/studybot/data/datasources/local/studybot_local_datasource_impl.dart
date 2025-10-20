@@ -23,7 +23,7 @@ class StudybotLocalDatasourceImpl implements StudybotLocalDatasource {
     log('Entra en saveChat');
     try {
       // log('Entra en el datasource a guardar el chat con id: ${chat.id}');
-      log('Los datos guardados en el chat son   : ${jsonEncode(chat.toJson())}');
+      // log('Los datos guardados en el chat son   : ${jsonEncode(chat.toJson())}');
       await _box.put(chat.id, jsonEncode(chat.toJson()));
       return right(unit);
     } catch (e) {

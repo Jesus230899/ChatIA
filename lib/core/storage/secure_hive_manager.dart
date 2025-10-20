@@ -39,7 +39,7 @@ class SecureHiveManager {
 
   Box getBox(String name) => Hive.box(name);
 
-  // TODO: Usar cuando se haga logout o se requiera limpiar todos los chats
+
   Future<void> removeAllBoxes() async {
     for (final name in HiveBoxes.boxes) {
       if (await Hive.boxExists(name)) {

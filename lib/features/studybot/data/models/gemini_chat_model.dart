@@ -1,7 +1,6 @@
 import 'package:chatia/features/studybot/data/models/gemini_message_model.dart';
 import 'package:chatia/features/studybot/domain/entities/gemini_chat_entity.dart';
 import 'package:chatia/features/studybot/domain/entities/gemini_message_entity.dart';
-import 'package:uuid/uuid.dart';
 
 class GeminiChatModel extends GeminiChatEntity {
   const GeminiChatModel({
@@ -13,7 +12,7 @@ class GeminiChatModel extends GeminiChatEntity {
   // Para obtener los datos de local
   factory GeminiChatModel.fromJson(Map<String, dynamic> json) =>
       GeminiChatModel(
-        id: json['id'] ?? const Uuid().v4(),
+        id: json['id'],
         title: json['title'],
         contents:
             (json['contents'] as List?)
@@ -48,14 +47,14 @@ class GeminiChatModel extends GeminiChatEntity {
     contents: contents ?? this.contents,
   );
 
-  static GeminiChatModel createNew({
-    String? title,
-    required List<GeminiMessageEntity> contents,
-  }) {
-    return GeminiChatModel(
-      id: const Uuid().v4(),
-      title: title,
-      contents: contents,
-    );
-  }
+  // static GeminiChatModel createNew({
+  //   String? title,
+  //   required List<GeminiMessageEntity> contents,
+  // }) {
+  //   return GeminiChatModel(
+  //     id: const Uuid().v4(),
+  //     title: title,
+  //     contents: contents,
+  //   );
+  // }
 }

@@ -62,7 +62,7 @@ class GeminiRemoteDatasourceImpl implements GeminiRemoteDatasource {
         );
       }
       return right(
-        GeminiChatModel.createNew(
+        GeminiChatModel(
           contents: [
             ...chatWithPrompt.contents,
             GeminiMessageModel(
@@ -70,7 +70,9 @@ class GeminiRemoteDatasourceImpl implements GeminiRemoteDatasource {
               message: llmResponse.fold((l) => '', (r) => r),
               date: DateTime.now().toString(),
             ),
+            
           ],
+          id: chat.id,
         ),
       );
       // return externalInfo;

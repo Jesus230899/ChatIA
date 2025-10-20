@@ -10,6 +10,7 @@ import 'package:chatia/features/studybot/domain/usecases/get_all_chat_usecase.da
 import 'package:chatia/features/studybot/domain/usecases/save_chat_usecase.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:uuid/uuid.dart';
 
 part 'studybot_event.dart';
 part 'studybot_state.dart';
@@ -32,6 +33,9 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
       }
       if (event is GetAllChatsEvent) {
         await _onGetAllChatsEvent(event, emit);
+      }
+      if (event is ChangeTabEvent) {
+        await _onChangeTabEvent(event, emit);
       }
     });
   }
@@ -63,14 +67,19 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
       );
     }
     // Si no hay chat actual, crear uno nuevo con el mensaje del usuario
+    // final updatedChat =
+    //     currentChat ?? GeminiChatModel(contents: [newMessage], id: Uuid().v4());
+
     final updatedChat =
-        currentChat ?? GeminiChatModel.createNew(contents: [newMessage]);
+        currentChat ?? GeminiChatModel(contents: [newMessage], id: Uuid().v4());
+
     // Emitir el estado con el chat actualizado mostrando el mensaje del usuario y el mensaje de Pensando...
     emit(
       state.copyWith(
         chat: some(
           updatedChat.copyWith(
             contents: [...updatedChat.contents, thinkingMessage],
+            id: updatedChat.id,
           ),
         ),
       ),
@@ -100,8 +109,13 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
       );
       // Tenemos mensajes sentinelas con los cuales podemos realizar acciones adicionales
       // Por ejemplo, si el mensaje de Gemini contiene #guardar_chat, podemos guardar el chat automáticamente
-      final lastMessage = response.contents.last;
-      if (lastMessage.message.contains('#guardar_chat')) {
+      // En este caso, el guardado automatico se da si en el historial Gemini respondió al menos una vez con la palabra clave
+      final bool hasResponseByIA = response.contents
+          .where(
+            (e) => e.isUser == false && e.message.contains('#guardar_chat'),
+          )
+          .isNotEmpty;
+      if (hasResponseByIA) {
         log('Entra en que debe de guardar el chat automaticamente');
         add(SaveChatEvent());
       }
@@ -135,11 +149,7 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
     final currentChat = state.chat.fold(() => null, (r) => r);
     if (currentChat == null) return;
 
-    final result = await saveChatUsecase(currentChat);
-    log(result.toString());
-
-    // Aquí iría la lógica para guardar el chat, por ejemplo, llamando a un caso de uso específico.
-    // Por ahora, solo emitimos un estado indicando que el chat se ha guardado.
+    await saveChatUsecase(currentChat);
 
     emit(state.copyWith(askGeminiResult: some(right(currentChat))));
   }
@@ -149,7 +159,16 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
     Emitter<StudybotState> emit,
   ) async {
     final result = await getAllChatsUsecase(NoParams());
-    log(result.toString());
     emit(state.copyWith(chats: result.fold((l) => [], (r) => r)));
+  }
+
+  Future<void> _onChangeTabEvent(
+    ChangeTabEvent event,
+    Emitter<StudybotState> emit,
+  ) async {
+    emit(state.copyWith(tabIndex: event.tabIndex));
+    if (event.tabIndex == 1) {
+      add(GetAllChatsEvent());
+    }
   }
 }

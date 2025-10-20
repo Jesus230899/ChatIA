@@ -75,44 +75,34 @@ class _StudyBotScreenState extends State<StudyBotScreen>
           Container(color: Colors.blue),
         ],
       ),
-      bottomNavigationBar: TabBar(
-        controller: _tabController,
-        onTap: (val) {
-          if (val == 1) {
-            bloc.add(GetAllChatsEvent());
-          }
-        },
-        labelColor: AppColors.primary,
-        unselectedLabelColor: AppColors.icon,
-        tabs: [
-          SafeArea(
-            child: Tab(
-              icon: Icon(
-                Platform.isAndroid
-                    ? Icons.chat
-                    : CupertinoIcons.chat_bubble_fill,
-              ),
-              text: 'Chat',
-            ),
-          ),
-          SafeArea(
-            child: Tab(
-              icon: Icon(
-                Platform.isAndroid
-                    ? Icons.content_paste_rounded
-                    : CupertinoIcons.doc,
-              ),
-              text: 'Contenido',
-            ),
-          ),
-          SafeArea(
-            child: Tab(
-              icon: Icon(CupertinoIcons.profile_circled),
-              text: 'Perfil',
-            ),
-          ),
-        ],
-      ),
+      bottomNavigationBar: _bottomBar(),
+    );
+  }
+
+  Widget _bottomBar() {
+    return TabBar(
+      controller: _tabController,
+      onTap: (val) => bloc.add(ChangeTabEvent(tabIndex: val)),
+      labelColor: AppColors.primary,
+      unselectedLabelColor: AppColors.icon,
+      tabs: [
+        _itemTab(
+          Platform.isAndroid ? Icons.chat : CupertinoIcons.chat_bubble_fill,
+          'Chat',
+        ),
+        _itemTab(
+          Platform.isAndroid ? Icons.content_paste_rounded : CupertinoIcons.doc,
+          'Contenido',
+        ),
+        _itemTab(CupertinoIcons.profile_circled, 'Perfil'),
+      ],
+    );
+  }
+
+  Widget _itemTab(IconData icon, String text) {
+    return SafeArea(
+      top: false,
+      child: Tab(icon: Icon(icon), text: text),
     );
   }
 
@@ -132,6 +122,24 @@ class _StudyBotScreenState extends State<StudyBotScreen>
           color: Colors.grey.shade400, // color de la línea
           height: 1, // grosor de la línea
         ),
+      ),
+      actions: [_actionBar()],
+    );
+  }
+
+  Widget _actionBar() {
+    return Visibility(
+      visible: bloc.state.tabIndex == 0,
+      child: PopupMenuButton<String>(
+        onSelected: (value) {
+          if (value == 'guardar') {
+            bloc.add(SaveChatEvent());
+          } else if (value == 'borrar') {}
+        },
+        itemBuilder: (context) => [
+          const PopupMenuItem(value: 'guardar', child: Text('Guardar chat')),
+          const PopupMenuItem(value: 'nuevo', child: Text('Nuevo chat')),
+        ],
       ),
     );
   }

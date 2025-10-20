@@ -19,3 +19,14 @@ class AskGeminiEvent extends StudybotEvent {
 class SaveChatEvent extends StudybotEvent {}
 
 class GetAllChatsEvent extends StudybotEvent {}
+
+class DeleteAllChatsEvent extends StudybotEvent {}
+
+class ChangeTabEvent extends StudybotEvent {
+  final int tabIndex;
+
+  const ChangeTabEvent({required this.tabIndex});
+
+  @override
+  List<Object> get props => [tabIndex];
+}

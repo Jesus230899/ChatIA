@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:animate_do/animate_do.dart';
 import 'package:chatia/core/theme/colors.dart';
 import 'package:chatia/core/utils/text_cleanners.dart';
 import 'package:chatia/features/studybot/data/models/gemini_chat_model.dart';
@@ -15,17 +18,20 @@ class StudybotChatsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      itemBuilder: (context, index) => _itemChat(index, context),
-      separatorBuilder: (context, index) {
-        return Divider(color: AppColors.message);
-      },
-      itemCount: bloc.state.chats.length,
+    return FadeIn(
+      child: ListView.separated(
+        itemBuilder: (context, index) => _itemChat(index, context),
+        separatorBuilder: (context, index) {
+          return Divider(color: AppColors.message);
+        },
+        itemCount: bloc.state.chats.length,
+      ),
     );
   }
 
   Widget _itemChat(int index, BuildContext context) {
     final chat = bloc.state.chats[index];
+    log(chat.id);
     return ListTile(
       title: _getTitle(chat) != null
           ? Text(_getTitle(chat)!, style: TextStyle(fontSize: 12))
