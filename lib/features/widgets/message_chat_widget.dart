@@ -115,7 +115,7 @@ class MessageChatWidget extends StatelessWidget {
 
   Widget _messageText() {
     return Text(
-      getTextFromPrompt(prompt: message) ?? message,
+      _getMessageText(message),
       style: TextStyle(color: isUser ? Colors.white : Colors.black),
     );
   }
@@ -132,5 +132,14 @@ class MessageChatWidget extends StatelessWidget {
         JumpingDotLoader(dotColor: AppColors.primary),
       ],
     );
+  }
+
+  String _getMessageText(String messagee) {
+    final cleanedText = getTextFromPrompt(prompt: messagee) ?? messagee;
+
+    if (cleanedText.contains('#guardar_chat')) {
+      return 'El chat se guardará automaticamente. Puedes acceder a él en la sección de "Contenido". Podemos seguir conversando aquí si lo deseas.';
+    }
+    return cleanedText;
   }
 }

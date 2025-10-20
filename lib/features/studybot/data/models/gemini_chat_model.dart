@@ -14,7 +14,7 @@ class GeminiChatModel extends GeminiChatEntity {
   factory GeminiChatModel.fromJson(Map<String, dynamic> json) =>
       GeminiChatModel(
         id: json['id'] ?? const Uuid().v4(),
-        title: json['title'] ?? '',
+        title: json['title'],
         contents:
             (json['contents'] as List?)
                 ?.map((e) => GeminiMessageModel.fromJson(e))

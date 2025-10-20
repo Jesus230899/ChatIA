@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 class GeminiMessageEntity extends Equatable {
   final bool isUser;
   final String message;
-  final DateTime? date;
+  final String? date;
 
   const GeminiMessageEntity({required this.isUser, required this.message, this.date});
 

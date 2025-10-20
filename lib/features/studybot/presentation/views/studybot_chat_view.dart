@@ -1,10 +1,9 @@
+import 'dart:developer';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:chatia/core/resources/resource_icons.dart';
 import 'package:chatia/core/theme/colors.dart';
-import 'package:chatia/core/utils/text_cleanners.dart';
-import 'package:chatia/features/studybot/data/models/gemini_message_model.dart';
 import 'package:chatia/features/studybot/presentation/bloc/studybot_bloc.dart';
-import 'package:chatia/features/widgets/jumping_dot_loader_widget.dart';
 import 'package:chatia/features/widgets/message_chat_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -48,12 +47,6 @@ class _StudybotChatViewState extends State<StudybotChatView> {
     if (chat == null) {
       return _emptyChat();
     }
-
-    // if (widget.bloc.state.loadingMessage) {
-    //   chat.contents.add(
-    //     GeminiMessageModel(isUser: false, message: 'Pensando...'),
-    //   );
-    // }
     return Expanded(
       child: ListView.separated(
         shrinkWrap: true,

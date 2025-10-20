@@ -16,4 +16,6 @@ class AskGeminiEvent extends StudybotEvent {
   List<Object> get props => [question];
 }
 
+class SaveChatEvent extends StudybotEvent {}
 
+class GetAllChatsEvent extends StudybotEvent {}

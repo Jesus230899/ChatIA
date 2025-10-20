@@ -5,7 +5,7 @@ import 'package:dartz/dartz.dart';
 // Esta interfaz define el contrato para el repositorio que maneja las interacciones con el modelo Gemini.
 // Al definir un repositorio abstracto, podemos cambiar la implementación concreta sin afectar las capas superiores.
 // Esto es fundamental para mantener una arquitectura limpia y desacoplada.
-abstract class StudybotRepository {
+abstract class StudybotRemoteRepository {
   // Either se utiliza para manejar tanto el resultado exitoso(String) como los posibles errores(OperationFailure) de manera funcional.
   Future<Either<OperationFailure, GeminiChatModel>> askGemini({
     required GeminiChatModel chat,

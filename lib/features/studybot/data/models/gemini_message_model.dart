@@ -12,7 +12,7 @@ class GeminiMessageModel extends GeminiMessageEntity {
       GeminiMessageModel(
         isUser: json['isUser'] ?? false,
         message: json['message'] ?? '',
-        date: json['date'] != null ? DateTime.parse(json['date']) : null,
+        date: json['date'] ?? '',
       );
 
   // Para guardar localmente
@@ -40,7 +40,7 @@ class GeminiMessageModel extends GeminiMessageEntity {
   GeminiMessageModel copyWith({
     bool? isUser,
     String? message,
-    DateTime? date,
+    String? date,
   }) => GeminiMessageModel(
     isUser: isUser ?? this.isUser,
     message: message ?? this.message,

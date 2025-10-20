@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:chatia/core/injection/base_injection.dart';
 import 'package:chatia/core/theme/colors.dart';
 import 'package:chatia/features/studybot/presentation/bloc/studybot_bloc.dart';
 import 'package:chatia/features/studybot/presentation/views/studybot_chat_view.dart';
+import 'package:chatia/features/studybot/presentation/views/studybot_chats_view.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,6 +22,7 @@ class StudyBotScreen extends StatefulWidget {
 class _StudyBotScreenState extends State<StudyBotScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  late Size size;
 
   final StudybotBloc bloc = getIt<StudybotBloc>();
 
@@ -35,6 +40,7 @@ class _StudyBotScreenState extends State<StudyBotScreen>
 
   @override
   Widget build(BuildContext context) {
+    size = MediaQuery.sizeOf(context);
     return BlocProvider(create: (context) => bloc, child: _bodyConsumer());
   }
 
@@ -65,19 +71,47 @@ class _StudyBotScreenState extends State<StudyBotScreen>
         physics: NeverScrollableScrollPhysics(),
         children: [
           StudybotChatView(bloc: bloc),
-          Container(color: Colors.green),
+          StudybotChatsView(bloc: bloc, size: size),
           Container(color: Colors.blue),
         ],
       ),
-      bottomNavigationBar: SafeArea(
-        child: TabBar(
-          controller: _tabController,
-          tabs: [
-            Tab(icon: Icon(Icons.chat), text: 'Chat'),
-            Tab(icon: Icon(Icons.info), text: 'Contenido'),
-            Tab(icon: Icon(Icons.settings), text: 'Perfil'),
-          ],
-        ),
+      bottomNavigationBar: TabBar(
+        controller: _tabController,
+        onTap: (val) {
+          if (val == 1) {
+            bloc.add(GetAllChatsEvent());
+          }
+        },
+        labelColor: AppColors.primary,
+        unselectedLabelColor: AppColors.icon,
+        tabs: [
+          SafeArea(
+            child: Tab(
+              icon: Icon(
+                Platform.isAndroid
+                    ? Icons.chat
+                    : CupertinoIcons.chat_bubble_fill,
+              ),
+              text: 'Chat',
+            ),
+          ),
+          SafeArea(
+            child: Tab(
+              icon: Icon(
+                Platform.isAndroid
+                    ? Icons.content_paste_rounded
+                    : CupertinoIcons.doc,
+              ),
+              text: 'Contenido',
+            ),
+          ),
+          SafeArea(
+            child: Tab(
+              icon: Icon(CupertinoIcons.profile_circled),
+              text: 'Perfil',
+            ),
+          ),
+        ],
       ),
     );
   }
