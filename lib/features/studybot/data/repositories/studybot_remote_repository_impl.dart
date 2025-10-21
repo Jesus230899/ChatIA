@@ -14,4 +14,11 @@ class StudybotRemoteRepositoryImpl extends StudybotRemoteRepository {
   }) async {
     return await geminiDatasource.askGemini(chat: chat);
   }
+
+  @override
+  Future<Either<OperationFailure, String>> getChatName({
+    required List<String> questions,
+  }) async {
+    return await geminiDatasource.getChatName(questions: questions);
+  }
 }

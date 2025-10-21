@@ -10,6 +10,7 @@ import 'package:chatia/features/studybot/domain/repositories/studybot_remote_rep
 import 'package:chatia/features/studybot/domain/usecases/ask_gemini_usecase.dart';
 import 'package:chatia/features/studybot/domain/usecases/get_all_chat_usecase.dart';
 import 'package:chatia/features/studybot/domain/usecases/get_chat_by_id_usecase.dart';
+import 'package:chatia/features/studybot/domain/usecases/get_chat_name_usecase.dart';
 import 'package:chatia/features/studybot/domain/usecases/save_chat_usecase.dart';
 import 'package:chatia/features/studybot/presentation/bloc/studybot_bloc.dart';
 
@@ -27,6 +28,7 @@ Future<void> initStudybotInjection() async {
       askGeminiUseCase: getIt(),
       getAllChatsUsecase: getIt(),
       saveChatUsecase: getIt(),
+      getChatNameUsecase: getIt(),
     ),
   );
 
@@ -45,6 +47,10 @@ Future<void> initStudybotInjection() async {
 
   getIt.registerLazySingleton<GetChatByIdUsecase>(
     () => GetChatByIdUsecase(repository: getIt()),
+  );
+
+  getIt.registerLazySingleton<GetChatNameUsecase>(
+    () => GetChatNameUsecase(repository: getIt()),
   );
 
   // Repositorios
@@ -71,6 +77,7 @@ void unRegisterInjections() {
   removeRegistrationIfExist<SaveChatUsecase>();
   removeRegistrationIfExist<GetChatByIdUsecase>();
   removeRegistrationIfExist<GetAllChatsUsecase>();
+  removeRegistrationIfExist<GetChatNameUsecase>();
   removeRegistrationIfExist<StudybotRemoteRepository>();
   removeRegistrationIfExist<StudybotLocalRepository>();
   removeRegistrationIfExist<GeminiRemoteDatasource>();

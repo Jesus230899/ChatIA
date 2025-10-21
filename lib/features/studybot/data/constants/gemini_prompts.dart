@@ -66,6 +66,6 @@ Tu prioridad es mantener el flujo de conversación fluido, rápido y enfocado en
   }
 
   static String generateTitleChat({required List<String> questions}) {
-    return 'Genera un título breve (4-5 palabras) que resuma los temas principales de las siguientes preguntas del usuario:\n\n$questions';
+    return 'Genera un solo título breve (máximo 5 palabras) que resuma los temas principales de las siguientes preguntas del usuario. No expliques tu elección, no des opciones, solo devuelve el título. Preguntas:\n\n$questions';
   }
 }

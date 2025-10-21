@@ -70,7 +70,6 @@ class GeminiRemoteDatasourceImpl implements GeminiRemoteDatasource {
               message: llmResponse.fold((l) => '', (r) => r),
               date: DateTime.now().toString(),
             ),
-            
           ],
           id: chat.id,
         ),
@@ -177,5 +176,67 @@ class GeminiRemoteDatasourceImpl implements GeminiRemoteDatasource {
       if (w.length > 2) return w; // simplificación básica
     }
     return null;
+  }
+
+  @override
+  Future<Either<OperationFailure, String>> getChatName({
+    required List<String> questions,
+  }) async {
+    try {
+      final Either<OperationFailure, http.Response> response = await retry(
+        () async {
+          final resp = await http.post(
+            Uri(
+              host: _baseURL,
+              scheme: "https",
+              path: _pathURL,
+              queryParameters: {"key": _apikey},
+            ),
+            headers: {'Content-Type': 'application/json'},
+
+            body: jsonEncode({
+              "contents": [
+                {
+                  "role": "user",
+                  "parts": {
+                    "text": GeminiPrompts.generateTitleChat(
+                      questions: questions,
+                    ),
+                  },
+                },
+              ],
+            }),
+          );
+          // log(resp.toString());
+          // log('Gemini response: ${resp.body}');
+          if (resp.statusCode != 200) {
+            // log(resp.body.toString());
+            return left(
+              OperationFailure(code: resp.statusCode, message: resp.body),
+            );
+          }
+          return right(resp);
+        },
+        maxAttempts: 3,
+      );
+      if (response.isRight()) {
+        final result = response.fold((l) => null, (r) => r);
+        final body = jsonDecode(result!.body);
+        final textResponse =
+            body['candidates']?[0]?['content']?['parts']?[0]?['text'];
+        return textResponse != null
+            ? right(textResponse)
+            : left(
+                OperationFailure(code: 500, message: 'No response from Gemini'),
+              );
+      }
+      return left(
+        response.fold((l) => l, (r) => OperationFailure(message: '')),
+      );
+    } catch (e) {
+      return left(
+        OperationFailure(message: 'Error al obtener el nombre del chat.'),
+      );
+    }
   }
 }

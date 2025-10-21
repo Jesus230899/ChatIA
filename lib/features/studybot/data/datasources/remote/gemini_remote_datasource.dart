@@ -6,4 +6,8 @@ abstract class GeminiRemoteDatasource {
   Future<Either<OperationFailure, GeminiChatModel>> askGemini({
     required GeminiChatModel chat,
   });
+
+  Future<Either<OperationFailure, String>> getChatName({
+    required List<String> questions,
+  });
 }

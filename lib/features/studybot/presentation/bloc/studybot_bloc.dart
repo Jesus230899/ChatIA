@@ -3,10 +3,12 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:chatia/core/failure/operation_failure.dart';
 import 'package:chatia/core/usecase/usecase.dart';
+import 'package:chatia/core/utils/text_cleanners.dart';
 import 'package:chatia/features/studybot/data/models/gemini_chat_model.dart';
 import 'package:chatia/features/studybot/data/models/gemini_message_model.dart';
 import 'package:chatia/features/studybot/domain/usecases/ask_gemini_usecase.dart';
 import 'package:chatia/features/studybot/domain/usecases/get_all_chat_usecase.dart';
+import 'package:chatia/features/studybot/domain/usecases/get_chat_name_usecase.dart';
 import 'package:chatia/features/studybot/domain/usecases/save_chat_usecase.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
@@ -19,10 +21,12 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
   final AskGeminiUseCase askGeminiUseCase;
   final SaveChatUsecase saveChatUsecase;
   final GetAllChatsUsecase getAllChatsUsecase;
+  final GetChatNameUsecase getChatNameUsecase;
   StudybotBloc({
     required this.askGeminiUseCase,
     required this.saveChatUsecase,
     required this.getAllChatsUsecase,
+    required this.getChatNameUsecase,
   }) : super(StudybotState.initial()) {
     on<StudybotEvent>((event, emit) async {
       if (event is AskGeminiEvent) {
@@ -146,10 +150,15 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
     SaveChatEvent event,
     Emitter<StudybotState> emit,
   ) async {
+    log('Entra en saveChatEvent');
     final currentChat = state.chat.fold(() => null, (r) => r);
     if (currentChat == null) return;
+    String title = '';
+    // if (currentChat.title == null || currentChat.title!.isEmpty) {
+    title = await _getTitleChat(currentChat);
+    // }
 
-    await saveChatUsecase(currentChat);
+    await saveChatUsecase(currentChat.copyWith(title: title));
 
     emit(state.copyWith(askGeminiResult: some(right(currentChat))));
   }
@@ -170,5 +179,24 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
     if (event.tabIndex == 1) {
       add(GetAllChatsEvent());
     }
+  }
+
+  Future<String> _getTitleChat(GeminiChatModel chat) async {
+    List<String> questions = [];
+    if (chat.contents.length >= 3) {
+      questions = chat.contents
+          .where((e) => e.isUser)
+          .take(3)
+          .map((e) => getTextFromPrompt(prompt: e.message) ?? e.message)
+          .toList();
+    } else {
+      questions = chat.contents
+          .where((e) => e.isUser)
+          .map((e) => getTextFromPrompt(prompt: e.message) ?? e.message)
+          .toList();
+    }
+    final result = await getChatNameUsecase(questions);
+    log('Result es $result');
+    return result.fold((l) => '', (r) => r);
   }
 }

@@ -10,4 +10,8 @@ abstract class StudybotRemoteRepository {
   Future<Either<OperationFailure, GeminiChatModel>> askGemini({
     required GeminiChatModel chat,
   });
+  // Este nos ayudará a obtener un nombre para el chat de acuerdo a las 3 primeras preguntas realizadas por el usaurio
+  Future<Either<OperationFailure, String>> getChatName({
+    required List<String> questions
+  });
 }
