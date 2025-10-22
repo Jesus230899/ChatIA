@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:animate_do/animate_do.dart';
 import 'package:chatia/core/resources/resource_icons.dart';
 import 'package:chatia/core/theme/colors.dart';
@@ -62,7 +60,6 @@ class StudybotChatsView extends StatelessWidget {
 
   Widget _itemChat(int index, BuildContext context) {
     final chat = bloc.state.chats[index];
-    log(chat.id);
     return ListTile(
       title: _getTitle(chat) != null
           ? Text(_getTitle(chat)!, style: TextStyle(fontSize: 12))

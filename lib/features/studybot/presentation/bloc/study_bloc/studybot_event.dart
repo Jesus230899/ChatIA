@@ -22,13 +22,13 @@ class GetAllChatsEvent extends StudybotEvent {}
 
 class DeleteAllChatsEvent extends StudybotEvent {}
 
-class ChangeTabEvent extends StudybotEvent {
-  final int tabIndex;
+// class ChangeTabEvent extends StudybotEvent {
+//   final int tabIndex;
 
-  const ChangeTabEvent({required this.tabIndex});
+//   const ChangeTabEvent({required this.tabIndex});
 
-  @override
-  List<Object> get props => [tabIndex];
-}
+//   @override
+//   List<Object> get props => [tabIndex];
+// }
 
 class NewChatEvent extends StudybotEvent {}

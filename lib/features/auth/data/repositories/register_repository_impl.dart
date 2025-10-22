@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:chatia/core/failure/operation_failure.dart';
 import 'package:chatia/features/auth/data/datasources/remote/register_remote_datasource.dart';
@@ -22,7 +21,6 @@ class RegisterRepositoryImpl implements RegisterRepository {
       String source = const Utf8Decoder().convert(result.bodyBytes);
       final responseData = json.decode(source);
 
-      log(responseData.toString());
       if (result.statusCode == 200) {
         return right(UserDataModel.fromJson(responseData['body']));
       }

@@ -24,7 +24,7 @@ Future<void> injectDependencies() async {
     try {
       await inject();
     } catch (e) {
-      log('Error injecting dependencies for ${inject.toString()}: $e');
+      log('Error injectando dependencias ${inject.toString()}: $e');
     }
   }
 }

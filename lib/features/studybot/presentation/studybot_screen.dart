@@ -93,7 +93,6 @@ class _StudyBotScreenState extends State<StudyBotScreen>
     return TabBar(
       controller: _tabController,
       onTap: (val) {
-        bloc.add(ChangeTabEvent(tabIndex: val));
         if (val == 1) {
           bloc.add(GetAllChatsEvent());
         }
@@ -148,7 +147,7 @@ class _StudyBotScreenState extends State<StudyBotScreen>
 
   Widget _actionBar() {
     return Visibility(
-      visible: bloc.state.tabIndex == 0,
+      visible: _tabController.index == 0,
       child: PopupMenuButton<String>(
         onSelected: (value) {
           if (value == 'guardar') {

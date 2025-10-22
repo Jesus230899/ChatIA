@@ -1,9 +1,6 @@
 import 'dart:convert';
-import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
 import 'package:chatia/core/failure/operation_failure.dart';
-import 'package:chatia/core/injection/base_injection.dart';
 import 'package:chatia/core/usecase/usecase.dart';
 import 'package:chatia/features/auth/data/models/user_data_model.dart';
 import 'package:chatia/features/studybot/domain/usecases/delete_all_chats_usecase.dart';
@@ -17,9 +14,17 @@ part 'study_form_state.dart';
 
 class StudyFormBloc extends Bloc<StudyFormEvent, StudyFormState> {
   final DeleteAllChatsUsecase deleteAllChatsUsecase;
-  StudyFormBloc({required this.deleteAllChatsUsecase})
+  final FlutterSecureStorage storage;
+  StudyFormBloc({required this.deleteAllChatsUsecase, required this.storage})
     : super(StudyFormState.initial()) {
     on<StudyFormEvent>((event, emit) async {
+      emit(
+        state.copyWith(
+          userDataResult: none(),
+          logOutResult: none(),
+          saveUserDataResult: none(),
+        ),
+      );
       if (event is LoadUserDataEvent) {
         await _onLoadUserDataEvent(event, emit);
       }
@@ -40,7 +45,6 @@ class StudyFormBloc extends Bloc<StudyFormEvent, StudyFormState> {
     Emitter<StudyFormState> emit,
   ) async {
     emit(state.copyWith(loading: true, userDataResult: none()));
-    final storage = getIt<FlutterSecureStorage>();
     final user = await storage.read(key: dotenv.env['USER_DATA']!);
     if (user != null) {
       final userData = UserDataModel.fromJson(jsonDecode(user));
@@ -79,11 +83,9 @@ class StudyFormBloc extends Bloc<StudyFormEvent, StudyFormState> {
     Emitter<StudyFormState> emit,
   ) async {
     emit(state.copyWith(loading: true, userDataResult: none()));
-    final storage = getIt<FlutterSecureStorage>();
 
     final userData = state.userData.fold(() => null, (r) => r);
     if (userData != null) {
-      log(userData.toJson().toString());
       await storage.write(
         key: dotenv.env['USER_DATA']!,
         value: jsonEncode(userData.toJson()),
@@ -104,7 +106,6 @@ class StudyFormBloc extends Bloc<StudyFormEvent, StudyFormState> {
     Emitter<StudyFormState> emit,
   ) async {
     emit(state.copyWith(loading: true, logOutResult: none()));
-    final storage = getIt<FlutterSecureStorage>();
 
     await storage.delete(key: dotenv.env['USER_DATA']!);
     await deleteAllChatsUsecase(NoParams());

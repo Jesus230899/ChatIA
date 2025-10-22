@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:chatia/core/routes/app_router.gr.dart';
 import 'package:chatia/core/theme/colors.dart';
@@ -38,7 +36,6 @@ class _StudybotProfileViewState extends State<StudybotProfileView> {
             setState(() {
               final data = state.userData.fold(() => null, (r) => r);
               if (data == null) return;
-              log('LOS DATOS DEL USUARIO EN EL PERFIL: $data');
               _fullNameCtr.text = data.fullName ?? '';
               _emailCtr.text = data.email;
             });

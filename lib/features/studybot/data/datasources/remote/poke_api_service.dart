@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:chatia/core/failure/operation_failure.dart';
 import 'package:chatia/core/http/http_client.dart';
 import 'package:dartz/dartz.dart';
@@ -11,11 +10,7 @@ class PokeApiService {
   PokeApiService({required this.client});
 
   Future<Either<OperationFailure, String>> fetchPokemon(String query) async {
-    log('Consultando PokeAPI con: $query');
     try {
-      // final response = await http.get(
-      //   Uri.parse('https://pokeapi.co/api/v2/pokemon/${query.toLowerCase()}'),
-      // );
       final response = await retry(
         () => client.get('/api/v2/pokemon/${query.toLowerCase()}'),
         maxAttempts: 3,

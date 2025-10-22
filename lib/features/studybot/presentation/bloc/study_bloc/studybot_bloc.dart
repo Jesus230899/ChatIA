@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
 import 'package:chatia/core/failure/operation_failure.dart';
 import 'package:chatia/core/usecase/usecase.dart';
@@ -39,9 +37,6 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
       if (event is GetAllChatsEvent) {
         await _onGetAllChatsEvent(event, emit);
       }
-      if (event is ChangeTabEvent) {
-        await _onChangeTabEvent(event, emit);
-      }
       if (event is NewChatEvent) {
         await _onNewChatEvent(event, emit);
       }
@@ -52,39 +47,40 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
     AskGeminiEvent event,
     Emitter<StudybotState> emit,
   ) async {
-    emit(state.copyWith(loadingMessage: true));
+    emit(state.copyWith(loadingMessage: true, askGeminiResult: none()));
     // Obtener el chat actual
     GeminiChatModel? currentChat = state.chat.fold(() => null, (r) => r);
 
-    // Formular el mensaje recibido por el usuario dentro del estado
+    // Crear nuevo mensaje basado en la pregunta del usuario
     final newMessage = GeminiMessageModel(
       isUser: true,
       message: event.question,
       date: DateTime.now().toString(),
     );
-    // Formular mensaje temporal de Pensando...
+    // Crear mensaje temporal de Pensando...
     final thinkingMessage = GeminiMessageModel(
       isUser: false,
       message: 'Pensando...',
       date: DateTime.now().toString(),
     );
+    // Crear mensaje de error en caso de fallo
     final errorMessage = GeminiMessageModel(
       isUser: false,
       message:
-          'Tuve un error al procesar tu solicitud, por favor intenta de nuevo. Si el prooblema persiste, intentalo más tarde.',
+          'Tuve un error al procesar tu solicitud, por favor intenta de nuevo más tarde.',
       date: DateTime.now().toString(),
     );
-    // Actualizar el chat actual con el nuevo mensaje del usuario
+    // Agregar el nuevo mensaje al chat actual
     if (currentChat != null) {
       currentChat = currentChat.copyWith(
         contents: [...currentChat.contents, newMessage],
       );
     }
-
+    //  Si el chat actual es nulo, significa que se debe de crear uno nuevo
     final updatedChat =
         currentChat ?? GeminiChatModel(contents: [newMessage], id: Uuid().v4());
 
-    // Emitir el estado con el chat actualizado mostrando el mensaje del usuario y el mensaje de Pensando...
+    // Se emite el estado con el thinkingMessage para dar una una experiencia agradable al usuario mostrando un mensaje de proceso mientras se obtiene la respuesta de Gemini
     emit(
       state.copyWith(
         chat: some(
@@ -97,10 +93,10 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
     );
     // Llamar al caso de uso para obtener la respuesta de Gemini
     final result = await askGeminiUseCase(updatedChat);
-    // Cuando de error actualizar el estado con el fallo
+    // Revisamos la respuesta de Gemini
     if (result.isLeft()) {
+      // Si da error tenemos que mostrar el mensaje de error en el chat para que el usuario sepa que hubo un fallo
       final failure = result.fold((l) => l, (r) => null);
-      // Si da error tenemos que mostrar un mensaje que indique que hubo un error
 
       emit(
         state.copyWith(
@@ -115,7 +111,7 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
         ),
       );
     } else {
-      // Cuando sea exitoso actualizar el estado con el chat actualizado
+      // Si la respuesta fue correcta tenemos que actualizar el chat con la respuesta de Gemini
       final response = result.fold((l) => null, (r) => r);
       if (response == null) return;
       // Se tiene que hacer emit sobre el estado actual para que se muestre la UI correcta en lo que continuamos con los procesos debidos.
@@ -135,46 +131,27 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
           )
           .isNotEmpty;
       if (hasResponseByIA) {
-        log('Entra en que debe de guardar el chat automaticamente');
+        // Si se cumple la condición, se agrega el evento para guardar el chat
         add(SaveChatEvent());
       }
     }
-
-    result.fold(
-      (failure) {
-        emit(
-          state.copyWith(
-            loadingMessage: false,
-            askGeminiResult: optionOf(left(failure)),
-          ),
-        );
-      },
-      (response) {
-        emit(
-          state.copyWith(
-            loadingMessage: false,
-            chat: some(response),
-            askGeminiResult: some(right(response)),
-          ),
-        );
-      },
-    );
   }
 
   Future<void> _onSaveChatEvent(
     SaveChatEvent event,
     Emitter<StudybotState> emit,
   ) async {
-    log('Entra en saveChatEvent');
+    // Obtenemos el chat actual
     final currentChat = state.chat.fold(() => null, (r) => r);
     if (currentChat == null) return;
     String title = '';
 
     // Por cuestiones de consistencia, primero guardamos el chat sin título
     await saveChatUsecase(currentChat);
+    // Luego obtenemos el título del chat
     title = await _getTitleChat(currentChat);
-    // Luego actualizamos el chat con el título obtenido
-    // await saveChatUsecase(currentChat.copyWith(title: title));
+    // Actualizamos el chat con el título obtenido
+    await saveChatUsecase(currentChat.copyWith(title: title));
 
     emit(state.copyWith(askGeminiResult: some(right(currentChat))));
   }
@@ -184,26 +161,17 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
     Emitter<StudybotState> emit,
   ) async {
     final result = await getAllChatsUsecase(NoParams());
-    log(result.toString());
     emit(state.copyWith(chats: result.fold((l) => [], (r) => r)));
   }
 
-  Future<void> _onChangeTabEvent(
-    ChangeTabEvent event,
-    Emitter<StudybotState> emit,
-  ) async {
-    emit(state.copyWith(tabIndex: event.tabIndex));
-    if (event.tabIndex == 1) {
-      add(GetAllChatsEvent());
-    }
-  }
-
   Future<String> _getTitleChat(GeminiChatModel chat) async {
+    // Extraer las últimas 4 preguntas del usuario para generar un título, si tiene menos de 4, tomamos todas las preguntas.
     List<String> questions = [];
-    if (chat.contents.length >= 3) {
+    if (chat.contents.length >= 4) {
       questions = chat.contents
           .where((e) => e.isUser)
-          .take(3)
+          .take(4)
+          // Usamos getTextFromPrompt para limpiar posibles prompts y obtener solo el texto que el usuario escribió
           .map((e) => getTextFromPrompt(prompt: e.message) ?? e.message)
           .toList();
     } else {
@@ -213,7 +181,6 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
           .toList();
     }
     final result = await getChatNameUsecase(questions);
-    log('Result es $result');
     return result.fold((l) => '', (r) => r);
   }
 

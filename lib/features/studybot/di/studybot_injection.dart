@@ -32,9 +32,9 @@ Future<void> initStudybotInjection() async {
       getChatNameUsecase: getIt(),
     ),
   );
-  getIt.registerFactory<StudyFormBloc>(() => StudyFormBloc(
-    deleteAllChatsUsecase: getIt(),
-  ));
+  getIt.registerFactory<StudyFormBloc>(
+    () => StudyFormBloc(deleteAllChatsUsecase: getIt(), storage: getIt()),
+  );
 
   // Casos de uso
   getIt.registerLazySingleton<AskGeminiUseCase>(
