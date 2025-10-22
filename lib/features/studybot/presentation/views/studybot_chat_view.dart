@@ -1,7 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:chatia/core/resources/resource_icons.dart';
 import 'package:chatia/core/theme/colors.dart';
-import 'package:chatia/features/studybot/presentation/bloc/studybot_bloc.dart';
+import 'package:chatia/features/studybot/presentation/bloc/study_bloc/studybot_bloc.dart';
 import 'package:chatia/features/widgets/message_chat_widget.dart';
 import 'package:flutter/material.dart';
 

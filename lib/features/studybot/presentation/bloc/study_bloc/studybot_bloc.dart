@@ -168,6 +168,7 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
     Emitter<StudybotState> emit,
   ) async {
     final result = await getAllChatsUsecase(NoParams());
+    log(result.toString());
     emit(state.copyWith(chats: result.fold((l) => [], (r) => r)));
   }
 

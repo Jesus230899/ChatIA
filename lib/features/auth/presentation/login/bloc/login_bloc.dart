@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
 import 'package:chatia/core/failure/operation_failure.dart';
 import 'package:chatia/features/auth/data/models/user_data_model.dart';
 import 'package:chatia/features/auth/domain/usecases/login_usecase.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
@@ -30,6 +34,20 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     final result = await loginUsecase(
       LoginParams(email: event.email, password: event.password),
     );
+    if (result.isRight()) {
+      final userData = result.fold((l) => null, (r) => r);
+      if (userData != null) _saveUserDataInSecureStorage(data: userData);
+    }
     emit(state.copyWith(loading: false, loginResult: some(result)));
+  }
+
+  Future<void> _saveUserDataInSecureStorage({
+    required UserDataModel data,
+  }) async {
+    const storage = FlutterSecureStorage(
+      aOptions: AndroidOptions(encryptedSharedPreferences: true),
+    );
+    final userEnv = dotenv.env["USER_DATA"] ?? '';
+    await storage.write(key: userEnv, value: jsonEncode(data.toJson()));
   }
 }

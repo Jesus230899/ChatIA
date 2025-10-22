@@ -8,11 +8,13 @@ import 'package:chatia/features/studybot/data/repositories/studybot_remote_repos
 import 'package:chatia/features/studybot/domain/repositories/studybot_local_repository.dart';
 import 'package:chatia/features/studybot/domain/repositories/studybot_remote_repository.dart';
 import 'package:chatia/features/studybot/domain/usecases/ask_gemini_usecase.dart';
+import 'package:chatia/features/studybot/domain/usecases/delete_all_chats_usecase.dart';
 import 'package:chatia/features/studybot/domain/usecases/get_all_chat_usecase.dart';
 import 'package:chatia/features/studybot/domain/usecases/get_chat_by_id_usecase.dart';
 import 'package:chatia/features/studybot/domain/usecases/get_chat_name_usecase.dart';
 import 'package:chatia/features/studybot/domain/usecases/save_chat_usecase.dart';
-import 'package:chatia/features/studybot/presentation/bloc/studybot_bloc.dart';
+import 'package:chatia/features/studybot/presentation/bloc/study_bloc/studybot_bloc.dart';
+import 'package:chatia/features/studybot/presentation/bloc/study_form_bloc/study_form_bloc.dart';
 
 // Por cada feature creamos un archivo de inyección de dependencias específico.
 // Aquí registramos las implementaciones concretas de las interfaces definidas en la capa de dominio
@@ -31,6 +33,9 @@ Future<void> initStudybotInjection() async {
       getChatNameUsecase: getIt(),
     ),
   );
+  getIt.registerFactory<StudyFormBloc>(() => StudyFormBloc(
+    deleteAllChatsUsecase: getIt(),
+  ));
 
   // Casos de uso
   getIt.registerLazySingleton<AskGeminiUseCase>(
@@ -51,6 +56,10 @@ Future<void> initStudybotInjection() async {
 
   getIt.registerLazySingleton<GetChatNameUsecase>(
     () => GetChatNameUsecase(repository: getIt()),
+  );
+
+  getIt.registerLazySingleton<DeleteAllChatsUsecase>(
+    () => DeleteAllChatsUsecase(repository: getIt()),
   );
 
   // Repositorios
@@ -78,6 +87,7 @@ void unRegisterInjections() {
   removeRegistrationIfExist<GetChatByIdUsecase>();
   removeRegistrationIfExist<GetAllChatsUsecase>();
   removeRegistrationIfExist<GetChatNameUsecase>();
+  removeRegistrationIfExist<DeleteAllChatsUsecase>();
   removeRegistrationIfExist<StudybotRemoteRepository>();
   removeRegistrationIfExist<StudybotLocalRepository>();
   removeRegistrationIfExist<GeminiRemoteDatasource>();

@@ -21,6 +21,7 @@ class CustomTextFieldWidget extends StatelessWidget {
   final VoidCallback? onEditingComplete;
   final Widget? suffix;
   final TextInputType? keyboardType;
+  final bool? enabled;
 
   const CustomTextFieldWidget({
     super.key,
@@ -40,7 +41,8 @@ class CustomTextFieldWidget extends StatelessWidget {
     this.autovalidateMode,
     this.onEditingComplete,
     this.suffix,
-    this.keyboardType
+    this.keyboardType,
+    this.enabled,
   });
 
   @override
@@ -56,12 +58,10 @@ class CustomTextFieldWidget extends StatelessWidget {
       inputFormatters: inputFormatters,
       onTap: onPressed,
       readOnly: onPressed != null,
-      style: GoogleFonts.openSans(
-        fontSize: 12,
-      ),
+      style: GoogleFonts.openSans(fontSize: 12),
       obscureText: obscureText ?? false,
       textCapitalization: TextCapitalization.none,
-
+      enabled: enabled,
       maxLines: 1,
       autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
       autofocus: false,

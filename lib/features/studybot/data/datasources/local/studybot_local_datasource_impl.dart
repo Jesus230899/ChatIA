@@ -57,11 +57,9 @@ class StudybotLocalDatasourceImpl implements StudybotLocalDatasource {
   }
 
   @override
-  Future<Either<OperationFailure, Unit>> deleteChat({
-    required String id,
-  }) async {
+  Future<Either<OperationFailure, Unit>> deleteAllChats() async {
     try {
-      await _box.delete(id);
+      await _box.clear();
       return right(unit);
     } catch (e) {
       return left(OperationFailure(message: e.toString()));

@@ -15,5 +15,5 @@ abstract class StudybotLocalRepository {
   });
   
   Future<Either<OperationFailure, List<GeminiChatModel>>> getAllChats();
-  Future<Either<OperationFailure, Unit>> deleteChat({required String id});
+  Future<Either<OperationFailure, Unit>> deleteAllChats();
 }

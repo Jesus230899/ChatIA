@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:chatia/core/injection/base_injection.dart';
 import 'package:chatia/core/theme/colors.dart';
-import 'package:chatia/features/studybot/presentation/bloc/studybot_bloc.dart';
+import 'package:chatia/features/studybot/presentation/bloc/study_bloc/studybot_bloc.dart';
+import 'package:chatia/features/studybot/presentation/bloc/study_form_bloc/study_form_bloc.dart';
 import 'package:chatia/features/studybot/presentation/views/studybot_chat_view.dart';
 import 'package:chatia/features/studybot/presentation/views/studybot_chats_view.dart';
+import 'package:chatia/features/studybot/presentation/views/studybot_profile_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,6 +27,7 @@ class _StudyBotScreenState extends State<StudyBotScreen>
   late Size size;
 
   final StudybotBloc bloc = getIt<StudybotBloc>();
+  final StudyFormBloc formBloc = getIt<StudyFormBloc>();
 
   @override
   void initState() {
@@ -41,7 +44,14 @@ class _StudyBotScreenState extends State<StudyBotScreen>
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.sizeOf(context);
-    return BlocProvider(create: (context) => bloc, child: _bodyConsumer());
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => bloc),
+        BlocProvider(create: (_) => formBloc),
+      ],
+
+      child: _bodyConsumer(),
+    );
   }
 
   Widget _bodyConsumer() {
@@ -72,7 +82,7 @@ class _StudyBotScreenState extends State<StudyBotScreen>
         children: [
           StudybotChatView(bloc: bloc),
           StudybotChatsView(bloc: bloc, size: size),
-          Container(color: Colors.blue),
+          StudybotProfileView(bloc: formBloc),
         ],
       ),
       bottomNavigationBar: _bottomBar(),
@@ -82,7 +92,16 @@ class _StudyBotScreenState extends State<StudyBotScreen>
   Widget _bottomBar() {
     return TabBar(
       controller: _tabController,
-      onTap: (val) => bloc.add(ChangeTabEvent(tabIndex: val)),
+      onTap: (val) {
+        bloc.add(ChangeTabEvent(tabIndex: val));
+        if(val==1){
+          bloc.add(GetAllChatsEvent());
+        }
+        if (val == 2) {
+          formBloc.add(LoadUserDataEvent());
+        }
+      },
+
       labelColor: AppColors.primary,
       unselectedLabelColor: AppColors.icon,
       tabs: [

@@ -28,9 +28,7 @@ class StudybotLocalRepositoryImpl extends StudybotLocalRepository {
   }
 
   @override
-  Future<Either<OperationFailure, Unit>> deleteChat({
-    required String id,
-  }) async {
-    return await geminiDatasource.deleteChat(id: id);
+  Future<Either<OperationFailure, Unit>> deleteAllChats() async {
+    return await geminiDatasource.deleteAllChats();
   }
 }
