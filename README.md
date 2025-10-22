@@ -80,6 +80,7 @@ lib/
 └── main.dart               # Punto de entrada de la aplicación
 ```
 
+
 #### **Domain**
 
 Es la capa central y más independiente del proyecto.  
@@ -88,6 +89,7 @@ Contiene:
 - **Entities:** Definen la estructura de los modelos de negocio. Extienden de `Equatable` para facilitar la comparación de objetos.
 - **Repositories:** Se definen como **clases abstractas o interfaces**, que establecen los contratos que deben implementar las capas inferiores.
 - **UseCases:** Representan las acciones o reglas de negocio. Actúan como puente entre el `domain` y la `presentation`.
+
 
 #### **Data**
 
@@ -99,11 +101,13 @@ Contiene la implementación concreta de los repositorios, modelos y fuentes de d
 - **Models:** Cada modelo extiende de su entidad y agrega métodos como `fromJson`, `toJson` y `copyWith`.
 - **Repositories:** Implementan los contratos definidos en `domain/repositories` y solicitan sus datasources mediante el constructor.
 
+
 #### **DI (Dependency Injection)**
 
 Usa **GetIt** como inyector de dependencias.  
 Cada feature tiene su propio archivo de configuración donde se registran sus `BLoCs`, `usecases`, `repositories` y `datasources`.  
 Gracias a GetIt, las dependencias se resuelven automáticamente en los constructores (`getIt<ExampleDatasource>()`).
+
 
 #### **Presentation**
 
