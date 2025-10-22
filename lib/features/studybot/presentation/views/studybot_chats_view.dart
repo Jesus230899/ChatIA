@@ -160,27 +160,6 @@ class StudybotChatsView extends StatelessWidget {
         );
       },
     );
-    // showModalBottomSheet(
-    //   context: context,
-    //   builder: (_) {
-    //     return SizedBox(
-    //       height: size.height,
-    //       child:
-    //
-    // ListView.separated(
-    //         shrinkWrap: true,
-    //         physics: const BouncingScrollPhysics(),
-    //         reverse: true,
-    //         itemCount: chat.contents.reversed.length,
-    //         itemBuilder: (_, index) => MessageChatWidget(
-    //           message: chat.contents.reversed.toList()[index].message,
-    //           isUser: chat.contents.reversed.toList()[index].isUser,
-    //           size: size,
-    //         ),
-    //         separatorBuilder: (_, index) => const SizedBox(height: 10),
-    //       ),
-    //     );
-    //   },
-    // );
+    
   }
 }

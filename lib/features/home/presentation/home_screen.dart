@@ -7,6 +7,8 @@ import 'package:chatia/features/home/presentation/bloc/home_bloc.dart';
 import 'package:chatia/features/widgets/custom_button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 @RoutePage()
 class HomeScreen extends StatelessWidget {
@@ -23,7 +25,10 @@ class HomeScreen extends StatelessWidget {
       child: BlocConsumer<HomeBloc, HomeState>(
         listener: (context, state) {},
         builder: (context, state) {
-          return Scaffold(body: _body(context));
+          return Scaffold(
+            body: _body(context),
+            floatingActionButton: _floatingButton(context),
+          );
         },
       ),
     );
@@ -185,5 +190,162 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _floatingButton(BuildContext context) {
+    return FloatingActionButton.extended(
+      onPressed: () => _showModalBottomSheet(context),
+      label: Text('Más información'),
+      icon: Icon(Icons.info_outline_rounded, color: Colors.white),
+    );
+  }
+
+  void _showModalBottomSheet(BuildContext context) {
+    showCupertinoModalBottomSheet(
+      context: context,
+      expand: false,
+      builder: (_) {
+        return Material(
+          child: SafeArea(
+            bottom: true,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 30),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Sobre el desarrollador',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    _presentationText(),
+                    const SizedBox(height: 10),
+                    _habilities(),
+                    const SizedBox(height: 10),
+                    _aboutMe(),
+                    const SizedBox(height: 20),
+                    _contact(),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _presentationText() {
+    return RichText(
+      text: TextSpan(
+        text: '¡Hola! Soy ',
+        style: TextStyle(color: Colors.black),
+        children: [
+          TextSpan(
+            text: 'Jesús Aguilar Martínez',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          TextSpan(
+            text:
+                ' desarrollador de aplicaciones móviles multiplataforma con más de ',
+          ),
+          TextSpan(
+            text: '4 años de experiencia',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          TextSpan(
+            text:
+                ' creando proyectos desde cero hasta su publicación. Me encanta diseñar y construir apps que realmente aporten valor, combinando buenas prácticas, seguridad y una experiencia de usuario agradable.',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _habilities() {
+    return RichText(
+      text: TextSpan(
+        text: 'A lo largo de mi carrera he trabajado con ',
+        style: TextStyle(color: Colors.black),
+        children: [
+          TextSpan(
+            text: 'DDD (Domain-Driven Design), BLoC',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          TextSpan(
+            text:
+                ' para la gestión de estado y diversas librerías que hacen que el código sea más limpio, seguro y escalable, como ',
+          ),
+          TextSpan(
+            text:
+                'flutter_bloc, get_it, injectable, dartz, flutter_secure_storage',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          TextSpan(text: ' , entre muchas otras.'),
+        ],
+      ),
+    );
+  }
+
+  Widget _aboutMe() {
+    return RichText(
+      text: TextSpan(
+        text:
+            'Soy una persona curiosa, que siempre busca aprender algo nuevo y mejorar cada detalle. Mi meta es seguir creando soluciones que inspiren, ayuden y hagan la tecnología un poco más cercana para todos.',
+        style: TextStyle(color: Colors.black),
+        children: [],
+      ),
+    );
+  }
+
+  Widget _contact() {
+    return Column(
+      children: [
+        RichText(
+          text: TextSpan(
+            text: 'Si tienes ',
+            style: TextStyle(color: Colors.black),
+            children: [
+              TextSpan(
+                text: 'sugerencias, comentarios o simplemente quieres saludar',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              TextSpan(text: ' , ¡me encantaría saber de ti!'),
+            ],
+          ),
+        ),
+        const SizedBox(height: 30),
+        CustomButtonWidget(onPressed: _sendEmail, text: 'Contactar por correo'),
+        const SizedBox(height: 20),
+        CustomButtonWidget(onPressed: _launchUrl, text: 'Ver mi LinedIn'),
+      ],
+    );
+  }
+
+  Future<void> _launchUrl() async {
+    const String url =
+        "https://www.linkedin.com/in/developer-mobile-jesus-alberto-aguilar-martinez/";
+    final Uri uri = Uri.parse(url);
+
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw Exception('No se pudo abrir: $url');
+    }
+  }
+
+  Future<void> _sendEmail() async {
+    final Uri emailUri = Uri(
+      scheme: 'mailto',
+      path: 'jesusalberto.aguilar01@gmail.com',
+      queryParameters: {'subject': 'Contacto desde tu app'},
+    );
+
+    if (!await launchUrl(emailUri)) {
+      throw Exception('No se pudo abrir el correo');
+    }
   }
 }
