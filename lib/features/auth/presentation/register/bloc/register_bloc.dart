@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:chatia/core/failure/operation_failure.dart';
+import 'package:chatia/core/injection/base_injection.dart';
 import 'package:chatia/features/auth/data/models/user_data_model.dart';
 import 'package:chatia/features/auth/domain/usecases/register_usecase.dart';
 import 'package:dartz/dartz.dart';
@@ -53,9 +54,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   Future<void> _saveUserDataInSecureStorage({
     required UserDataModel data,
   }) async {
-    const storage = FlutterSecureStorage(
-      aOptions: AndroidOptions(encryptedSharedPreferences: true),
-    );
+    final storage = getIt<FlutterSecureStorage>();
     final userEnv = dotenv.env["USER_DATA"] ?? '';
     await storage.write(key: userEnv, value: jsonEncode(data.toJson()));
   }

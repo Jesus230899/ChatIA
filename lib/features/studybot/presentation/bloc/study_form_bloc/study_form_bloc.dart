@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:chatia/core/failure/operation_failure.dart';
+import 'package:chatia/core/injection/base_injection.dart';
 import 'package:chatia/core/usecase/usecase.dart';
 import 'package:chatia/features/auth/data/models/user_data_model.dart';
 import 'package:chatia/features/studybot/domain/usecases/delete_all_chats_usecase.dart';
@@ -39,9 +40,7 @@ class StudyFormBloc extends Bloc<StudyFormEvent, StudyFormState> {
     Emitter<StudyFormState> emit,
   ) async {
     emit(state.copyWith(loading: true, userDataResult: none()));
-    const storage = FlutterSecureStorage(
-      aOptions: AndroidOptions(encryptedSharedPreferences: true),
-    );
+    final storage = getIt<FlutterSecureStorage>();
     final user = await storage.read(key: dotenv.env['USER_DATA']!);
     if (user != null) {
       final userData = UserDataModel.fromJson(jsonDecode(user));
@@ -80,9 +79,7 @@ class StudyFormBloc extends Bloc<StudyFormEvent, StudyFormState> {
     Emitter<StudyFormState> emit,
   ) async {
     emit(state.copyWith(loading: true, userDataResult: none()));
-    const storage = FlutterSecureStorage(
-      aOptions: AndroidOptions(encryptedSharedPreferences: true),
-    );
+    final storage = getIt<FlutterSecureStorage>();
 
     final userData = state.userData.fold(() => null, (r) => r);
     if (userData != null) {
@@ -107,9 +104,8 @@ class StudyFormBloc extends Bloc<StudyFormEvent, StudyFormState> {
     Emitter<StudyFormState> emit,
   ) async {
     emit(state.copyWith(loading: true, logOutResult: none()));
-    const storage = FlutterSecureStorage(
-      aOptions: AndroidOptions(encryptedSharedPreferences: true),
-    );
+    final storage = getIt<FlutterSecureStorage>();
+
     await storage.delete(key: dotenv.env['USER_DATA']!);
     await deleteAllChatsUsecase(NoParams());
     emit(state.copyWith(loading: false, logOutResult: optionOf(right(unit))));

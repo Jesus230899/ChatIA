@@ -2,6 +2,7 @@
 
 import 'package:animate_do/animate_do.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:chatia/core/injection/base_injection.dart';
 import 'package:chatia/core/resources/resource_icons.dart';
 import 'package:chatia/core/routes/app_router.gr.dart';
 import 'package:chatia/core/theme/colors.dart';
@@ -32,9 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<bool> _hasSession() async {
-    const storage = FlutterSecureStorage(
-      aOptions: AndroidOptions(encryptedSharedPreferences: true),
-    );
+    final storage = getIt<FlutterSecureStorage>();
     final user = await storage.read(key: dotenv.env['USER_DATA']!);
     return user != null;
   }

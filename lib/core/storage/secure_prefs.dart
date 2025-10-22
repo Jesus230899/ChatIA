@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:chatia/core/injection/base_injection.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SecurePrefs {
@@ -7,11 +8,12 @@ class SecurePrefs {
 
   SecurePrefs._internal(this._storage);
 
-  static final SecurePrefs _instance = SecurePrefs._internal(
-    const FlutterSecureStorage(),
-  );
+  static SecurePrefs? _instance;
 
-  static SecurePrefs get instance => _instance;
+  factory SecurePrefs() {
+    _instance ??= SecurePrefs._internal(getIt<FlutterSecureStorage>());
+    return _instance!;
+  }
 
   /// Guarda una lista de objetos JSON
   Future<void> setObjectList<T>(
