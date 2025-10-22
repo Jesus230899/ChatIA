@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:animate_do/animate_do.dart';
+import 'package:chatia/core/resources/resource_icons.dart';
 import 'package:chatia/core/theme/colors.dart';
 import 'package:chatia/core/utils/text_cleanners.dart';
 import 'package:chatia/features/studybot/data/models/gemini_chat_model.dart';
@@ -18,6 +19,9 @@ class StudybotChatsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (bloc.state.chats.isEmpty) {
+      return _emptyChatsView();
+    }
     return FadeIn(
       child: ListView.separated(
         itemBuilder: (context, index) => _itemChat(index, context),
@@ -25,6 +29,33 @@ class StudybotChatsView extends StatelessWidget {
           return Divider(color: AppColors.message);
         },
         itemCount: bloc.state.chats.length,
+      ),
+    );
+  }
+
+  Widget _emptyChatsView() {
+    return FadeIn(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadiusGeometry.circular(180),
+              child: Image.asset(
+                ResourceIcons.studyIcon,
+                width: 140,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(height: 40),
+            Text('¡Aún no tienes ningún chat!', textAlign: TextAlign.center),
+            Text(
+              'Inicia una conversación con uno de tus chatbots y comienza a explorar lo que pueden hacer por ti.',
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }
