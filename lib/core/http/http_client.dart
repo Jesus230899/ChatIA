@@ -6,7 +6,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class HTTPClient {
-  final baseURL = dotenv.env["BASE_URL_PIPEDREAM"] ?? '';
+  // final baseURL = dotenv.env["BASE_URL_PIPEDREAM"] ?? '';
+  final String baseURL;
+
+  HTTPClient({String? baseURL})
+    : baseURL = baseURL ?? dotenv.env["BASE_URL_PIPEDREAM"] ?? '';
 
   Future<http.Response> _sendRequest(
     String method,

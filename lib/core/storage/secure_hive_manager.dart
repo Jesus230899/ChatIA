@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:chatia/core/storage/hive_boxes.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 
 // Gestor seguro para Hive con cifrado AES
 class SecureHiveManager {
@@ -10,6 +11,7 @@ class SecureHiveManager {
   SecureHiveManager._internal();
 
   static const _secureStorage = FlutterSecureStorage();
+  bool _initialized = false;
 
   /// Obtiene la clave AES de forma segura, o la genera si no existe
   Future<List<int>> _getEncryptionKey() async {
@@ -27,7 +29,10 @@ class SecureHiveManager {
 
   /// Inicializa Hive y abre boxes con cifrado
   Future<void> init() async {
-    await Hive.initFlutter();
+    if (_initialized) return;
+    final dir = await getApplicationDocumentsDirectory();
+    Hive.init(dir.path);
+    // await Hive.initFlutter() ;
 
     final encryptionKey = await _getEncryptionKey();
 
@@ -35,6 +40,7 @@ class SecureHiveManager {
       HiveBoxes.geminiChats,
       encryptionCipher: HiveAesCipher(encryptionKey),
     );
+    _initialized = true;
   }
 
   Box getBox(String name) => Hive.box(name);

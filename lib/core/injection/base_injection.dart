@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:chatia/core/http/http_client_injection.dart';
 import 'package:chatia/features/auth/di/auth_injection.dart';
 import 'package:chatia/features/home/di/home_injection.dart';
+import 'package:chatia/features/studybot/data/datasources/local/studybot_local_datasource.dart';
+import 'package:chatia/features/studybot/data/datasources/local/studybot_local_datasource_impl.dart';
 import 'package:chatia/features/studybot/di/studybot_injection.dart';
 import 'package:get_it/get_it.dart';
 
@@ -10,26 +12,26 @@ import 'package:get_it/get_it.dart';
 final getIt = GetIt.instance;
 
 Future<void> injectDependencies() async {
-  // Esto crea un nuevo scope para las inyecciones de dependencias, lo que ayuda a gestionar el ciclo de vida de los objetos inyectados.
-  getIt.pushNewScope();
+  // if (!getIt.isRegistered<StudybotLocalDatasource>()) {
+  //   getIt.registerLazySingleton<StudybotLocalDatasource>(() => datasource);
+  //   log("✅ StudybotLocalDatasource registrado");
+  // }
 
   // Creamos una lista de todas las funciones de inyección de dependencias de cada feature.
   final injections = [
     initHTTPClientInjection,
     initStudybotInjection,
     initAuthInjection,
-    initHomeInjection
+    initHomeInjection,
   ];
 
-  await Future.wait(
-    injections.map((inject) async {
-      try {
-        await inject();
-      } catch (e) {
-        log('Error injecting dependencies for ${inject.toString()}: $e');
-      }
-    }),
-  );
+  for (final inject in injections) {
+    try {
+      await inject();
+    } catch (e) {
+      log('Error injecting dependencies for ${inject.toString()}: $e');
+    }
+  }
 }
 
 // Esta función elimina una instancia registrada en GetIt si ya existe, evitando conflictos o duplicaciones.

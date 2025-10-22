@@ -10,7 +10,6 @@ import 'package:chatia/features/studybot/domain/repositories/studybot_remote_rep
 import 'package:chatia/features/studybot/domain/usecases/ask_gemini_usecase.dart';
 import 'package:chatia/features/studybot/domain/usecases/delete_all_chats_usecase.dart';
 import 'package:chatia/features/studybot/domain/usecases/get_all_chat_usecase.dart';
-import 'package:chatia/features/studybot/domain/usecases/get_chat_by_id_usecase.dart';
 import 'package:chatia/features/studybot/domain/usecases/get_chat_name_usecase.dart';
 import 'package:chatia/features/studybot/domain/usecases/save_chat_usecase.dart';
 import 'package:chatia/features/studybot/presentation/bloc/study_bloc/studybot_bloc.dart';
@@ -50,10 +49,6 @@ Future<void> initStudybotInjection() async {
     () => GetAllChatsUsecase(repository: getIt()),
   );
 
-  getIt.registerLazySingleton<GetChatByIdUsecase>(
-    () => GetChatByIdUsecase(repository: getIt()),
-  );
-
   getIt.registerLazySingleton<GetChatNameUsecase>(
     () => GetChatNameUsecase(repository: getIt()),
   );
@@ -68,13 +63,14 @@ Future<void> initStudybotInjection() async {
   );
 
   getIt.registerLazySingleton<StudybotLocalRepository>(
-    () => StudybotLocalRepositoryImpl(geminiDatasource: getIt()),
+    () => StudybotLocalRepositoryImpl(datasource: getIt()),
   );
 
   // Datasources
   getIt.registerLazySingleton<GeminiRemoteDatasource>(
     () => GeminiRemoteDatasourceImpl(),
   );
+
   getIt.registerLazySingleton<StudybotLocalDatasource>(
     () => StudybotLocalDatasourceImpl(),
   );
@@ -84,7 +80,6 @@ void unRegisterInjections() {
   removeRegistrationIfExist<StudybotBloc>();
   removeRegistrationIfExist<AskGeminiUseCase>();
   removeRegistrationIfExist<SaveChatUsecase>();
-  removeRegistrationIfExist<GetChatByIdUsecase>();
   removeRegistrationIfExist<GetAllChatsUsecase>();
   removeRegistrationIfExist<GetChatNameUsecase>();
   removeRegistrationIfExist<DeleteAllChatsUsecase>();

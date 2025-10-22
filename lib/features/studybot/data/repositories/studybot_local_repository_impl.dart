@@ -5,30 +5,23 @@ import 'package:chatia/features/studybot/domain/repositories/studybot_local_repo
 import 'package:dartz/dartz.dart';
 
 class StudybotLocalRepositoryImpl extends StudybotLocalRepository {
-  final StudybotLocalDatasource geminiDatasource;
-  StudybotLocalRepositoryImpl({required this.geminiDatasource});
+  final StudybotLocalDatasource datasource;
+  StudybotLocalRepositoryImpl({required this.datasource});
 
   @override
   Future<Either<OperationFailure, Unit>> saveChat({
     required GeminiChatModel chat,
   }) async {
-    return await geminiDatasource.saveChat(chat: chat);
-  }
-
-  @override
-  Future<Either<OperationFailure, GeminiChatModel>> getChatById({
-    required String id,
-  }) async {
-    return await geminiDatasource.getChatById(id: id);
+    return await datasource.saveChat(chat: chat);
   }
 
   @override
   Future<Either<OperationFailure, List<GeminiChatModel>>> getAllChats() async {
-    return await geminiDatasource.getAllChats();
+    return await datasource.getAllChats();
   }
 
   @override
   Future<Either<OperationFailure, Unit>> deleteAllChats() async {
-    return await geminiDatasource.deleteAllChats();
+    return await datasource.deleteAllChats();
   }
 }

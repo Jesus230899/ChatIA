@@ -138,7 +138,7 @@ class MessageChatWidget extends StatelessWidget {
     final cleanedText = getTextFromPrompt(prompt: messagee) ?? messagee;
 
     if (cleanedText.contains('#guardar_chat')) {
-      return 'El chat se guardará automaticamente. Puedes acceder a él en la sección de "Contenido". Podemos seguir conversando aquí si lo deseas.';
+      return "Tu chat se guardará en breve. En unos momentos podrás verlo en la sección de 'Contenido'. Podemos seguir conversando aquí si lo deseas.";
     }
     return cleanedText;
   }

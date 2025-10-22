@@ -30,3 +30,5 @@ class ChangeTabEvent extends StudybotEvent {
   @override
   List<Object> get props => [tabIndex];
 }
+
+class NewChatEvent extends StudybotEvent {}

@@ -1,44 +1,41 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:chatia/core/failure/operation_failure.dart';
-import 'package:chatia/core/storage/hive_boxes.dart';
-import 'package:chatia/core/storage/secure_hive_manager.dart';
+import 'package:chatia/core/storage/secure_prefs.dart';
 import 'package:chatia/features/studybot/data/datasources/local/studybot_local_datasource.dart';
 import 'package:chatia/features/studybot/data/models/gemini_chat_model.dart';
 import 'package:dartz/dartz.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
 class StudybotLocalDatasourceImpl implements StudybotLocalDatasource {
-  final Box _box;
-  // final Box<String> _box = Hive.box<String>(HiveBoxes.geminiChats);
-
-  StudybotLocalDatasourceImpl()
-    : _box = SecureHiveManager().getBox(HiveBoxes.geminiChats);
+  final SecurePrefs _securePrefs = SecurePrefs.instance;
+  static const String _chatsKey = 'gemini_chats';
 
   @override
   Future<Either<OperationFailure, Unit>> saveChat({
     required GeminiChatModel chat,
   }) async {
-    log('Entra en saveChat');
     try {
-      // log('Entra en el datasource a guardar el chat con id: ${chat.id}');
-      // log('Los datos guardados en el chat son   : ${jsonEncode(chat.toJson())}');
-      await _box.put(chat.id, jsonEncode(chat.toJson()));
+      // Primero vamos a obtener la lista de los chats existentes
+      final chats = await _securePrefs.getObjectList<GeminiChatModel>(
+        _chatsKey,
+        (json) => GeminiChatModel.fromJson(json),
+      );
+      // Verificamos si el chat ya existe en la lista
+      final existingindex = chats.indexWhere(
+        (existingChat) => existingChat.id == chat.id,
+      );
+      if (existingindex != -1) {
+        // Si existe, actualizamos el chat en la lista
+        chats[existingindex] = chat;
+      } else {
+        // Si no existe, lo añadimos a la lista
+        chats.add(chat);
+      }
+      // Guardamos la lista actualizada de chats
+      await _securePrefs.setObjectList(
+        _chatsKey,
+        chats,
+        (chat) => chat.toJson(),
+      );
       return right(unit);
-    } catch (e) {
-      return left(OperationFailure(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<OperationFailure, GeminiChatModel>> getChatById({
-    required String id,
-  }) async {
-    try {
-      final data = _box.get(id);
-      if (data == null) return left(OperationFailure(code: 404));
-      return right(GeminiChatModel.fromJson((jsonDecode(data))));
     } catch (e) {
       return left(OperationFailure(message: e.toString()));
     }
@@ -47,9 +44,11 @@ class StudybotLocalDatasourceImpl implements StudybotLocalDatasource {
   @override
   Future<Either<OperationFailure, List<GeminiChatModel>>> getAllChats() async {
     try {
-      final chats = _box.values
-          .map((e) => GeminiChatModel.fromJson(jsonDecode(e)))
-          .toList();
+      // Primero vamos a obtener la lista de los chats existentes
+      final chats = await _securePrefs.getObjectList<GeminiChatModel>(
+        _chatsKey,
+        (json) => GeminiChatModel.fromJson(json),
+      );
       return right(chats);
     } catch (e) {
       return left(OperationFailure(message: e.toString()));
@@ -59,7 +58,7 @@ class StudybotLocalDatasourceImpl implements StudybotLocalDatasource {
   @override
   Future<Either<OperationFailure, Unit>> deleteAllChats() async {
     try {
-      await _box.clear();
+      await _securePrefs.remove(_chatsKey);
       return right(unit);
     } catch (e) {
       return left(OperationFailure(message: e.toString()));

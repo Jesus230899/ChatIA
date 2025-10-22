@@ -6,14 +6,12 @@ import 'package:dartz/dartz.dart';
 // Al definir un repositorio abstracto, podemos cambiar la implementación concreta sin afectar las capas superiores.
 // Esto es fundamental para mantener una arquitectura limpia y desacoplada.
 abstract class StudybotLocalRepository {
-  // Either se utiliza para manejar tanto el resultado exitoso(String) como los posibles errores(OperationFailure) de manera funcional.
+  // Either se utiliza para manejar tanto el resultado exitoso(Unit) como los posibles errores(OperationFailure) de manera funcional.
   Future<Either<OperationFailure, Unit>> saveChat({
     required GeminiChatModel chat,
   });
-  Future<Either<OperationFailure, GeminiChatModel>> getChatById({
-    required String id,
-  });
-  
+
   Future<Either<OperationFailure, List<GeminiChatModel>>> getAllChats();
+
   Future<Either<OperationFailure, Unit>> deleteAllChats();
 }

@@ -59,9 +59,9 @@ class _StudyBotScreenState extends State<StudyBotScreen>
       listener: (context, state) {
         state.askGeminiResult.fold(() {}, (either) {
           either.fold((l) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text('Error: ${l.message}')));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Hubo un error al contactar Gemini")),
+            );
           }, (r) => null);
         });
       },
@@ -94,7 +94,7 @@ class _StudyBotScreenState extends State<StudyBotScreen>
       controller: _tabController,
       onTap: (val) {
         bloc.add(ChangeTabEvent(tabIndex: val));
-        if(val==1){
+        if (val == 1) {
           bloc.add(GetAllChatsEvent());
         }
         if (val == 2) {
@@ -153,7 +153,12 @@ class _StudyBotScreenState extends State<StudyBotScreen>
         onSelected: (value) {
           if (value == 'guardar') {
             bloc.add(SaveChatEvent());
-          } else if (value == 'borrar') {}
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Chat guardado correctamente')),
+            );
+          } else if (value == 'nuevo') {
+            bloc.add(NewChatEvent());
+          }
         },
         itemBuilder: (context) => [
           const PopupMenuItem(value: 'guardar', child: Text('Guardar chat')),

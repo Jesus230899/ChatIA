@@ -29,6 +29,7 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
     required this.getChatNameUsecase,
   }) : super(StudybotState.initial()) {
     on<StudybotEvent>((event, emit) async {
+      emit(state.copyWith(askGeminiResult: none()));
       if (event is AskGeminiEvent) {
         await _onAskGeminiEvent(event, emit);
       }
@@ -40,6 +41,9 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
       }
       if (event is ChangeTabEvent) {
         await _onChangeTabEvent(event, emit);
+      }
+      if (event is NewChatEvent) {
+        await _onNewChatEvent(event, emit);
       }
     });
   }
@@ -64,15 +68,18 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
       message: 'Pensando...',
       date: DateTime.now().toString(),
     );
+    final errorMessage = GeminiMessageModel(
+      isUser: false,
+      message:
+          'Tuve un error al procesar tu solicitud, por favor intenta de nuevo. Si el prooblema persiste, intentalo más tarde.',
+      date: DateTime.now().toString(),
+    );
     // Actualizar el chat actual con el nuevo mensaje del usuario
     if (currentChat != null) {
       currentChat = currentChat.copyWith(
         contents: [...currentChat.contents, newMessage],
       );
     }
-    // Si no hay chat actual, crear uno nuevo con el mensaje del usuario
-    // final updatedChat =
-    //     currentChat ?? GeminiChatModel(contents: [newMessage], id: Uuid().v4());
 
     final updatedChat =
         currentChat ?? GeminiChatModel(contents: [newMessage], id: Uuid().v4());
@@ -93,9 +100,17 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
     // Cuando de error actualizar el estado con el fallo
     if (result.isLeft()) {
       final failure = result.fold((l) => l, (r) => null);
+      // Si da error tenemos que mostrar un mensaje que indique que hubo un error
+
       emit(
         state.copyWith(
           loadingMessage: false,
+          chat: some(
+            updatedChat.copyWith(
+              contents: [...updatedChat.contents, errorMessage],
+              id: updatedChat.id,
+            ),
+          ),
           askGeminiResult: optionOf(left(failure!)),
         ),
       );
@@ -154,11 +169,12 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
     final currentChat = state.chat.fold(() => null, (r) => r);
     if (currentChat == null) return;
     String title = '';
-    // if (currentChat.title == null || currentChat.title!.isEmpty) {
-    title = await _getTitleChat(currentChat);
-    // }
 
-    await saveChatUsecase(currentChat.copyWith(title: title));
+    // Por cuestiones de consistencia, primero guardamos el chat sin título
+    await saveChatUsecase(currentChat);
+    title = await _getTitleChat(currentChat);
+    // Luego actualizamos el chat con el título obtenido
+    // await saveChatUsecase(currentChat.copyWith(title: title));
 
     emit(state.copyWith(askGeminiResult: some(right(currentChat))));
   }
@@ -199,5 +215,12 @@ class StudybotBloc extends Bloc<StudybotEvent, StudybotState> {
     final result = await getChatNameUsecase(questions);
     log('Result es $result');
     return result.fold((l) => '', (r) => r);
+  }
+
+  Future<void> _onNewChatEvent(
+    NewChatEvent event,
+    Emitter<StudybotState> emit,
+  ) async {
+    emit(state.copyWith(chat: none()));
   }
 }
