@@ -1,8 +1,7 @@
 import 'dart:developer';
 
 import 'package:chatia/core/http/http_client_injection.dart';
-import 'package:chatia/features/login/di/login_injection.dart';
-import 'package:chatia/features/register/di/register_injection.dart';
+import 'package:chatia/features/auth/di/auth_injection.dart';
 import 'package:chatia/features/studybot/di/studybot_injection.dart';
 import 'package:get_it/get_it.dart';
 
@@ -17,8 +16,7 @@ Future<void> injectDependencies() async {
   final injections = [
     initHTTPClientInjection,
     initStudybotInjection,
-    initLoginInjection,
-    initRegisterInjection,
+    initAuthInjection,
   ];
 
   await Future.wait(

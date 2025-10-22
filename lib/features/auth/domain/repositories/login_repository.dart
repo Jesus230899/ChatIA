@@ -1,0 +1,10 @@
+import 'package:chatia/core/failure/operation_failure.dart';
+import 'package:chatia/features/auth/data/models/user_data_model.dart';
+import 'package:dartz/dartz.dart';
+
+abstract class LoginRepository {
+  Future<Either<OperationFailure, UserDataModel>> login({
+    required String email,
+    required String password,
+  });
+}
