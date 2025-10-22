@@ -5,7 +5,8 @@ import 'package:chatia/core/routes/app_router.gr.dart';
 class AppRouter extends RootStackRouter {
   @override
   final List<AutoRoute> routes = [
-    AutoRoute(page: LoginRoute.page, initial: true),
+    AutoRoute(page: SplashRoute.page, initial: true),
+    AutoRoute(page: LoginRoute.page),
     AutoRoute(page: RegisterRoute.page),
     AutoRoute(page: HomeRoute.page),
     AutoRoute(page: StudyBotRoute.page),

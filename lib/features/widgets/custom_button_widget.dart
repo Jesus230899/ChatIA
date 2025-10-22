@@ -10,6 +10,7 @@ class CustomButtonWidget extends StatelessWidget {
   final bool? isLoading;
   final bool? locked;
   final double? height;
+  final double? width;
   final Widget? leading;
   final Widget? trailing;
   final Widget? child;
@@ -21,6 +22,7 @@ class CustomButtonWidget extends StatelessWidget {
     this.isLoading = false,
     this.locked = false,
     this.height,
+    this.width,
     this.leading,
     this.trailing,
     this.child,
@@ -43,6 +45,7 @@ class CustomButtonWidget extends StatelessWidget {
       },
       child: Container(
         height: height ?? 50,
+        width: width,
         decoration: BoxDecoration(
           gradient: locked == false
               ? const LinearGradient(
