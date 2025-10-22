@@ -11,7 +11,7 @@ El propósito de esta app es ofrecer un asistente inteligente capaz de responder
 
 ## APK / Instalación
 Puedes descargar el APK de la app aquí:  
-[Descargar APK](https://drive.google.com/file/d/1r8u7X3JJve30c-Py52zhMQGLDaPGCZWb/view?usp=sharing)
+[Descargar APK](https://drive.google.com/file/d/1aL2R-L1s9lg2VKteuAAGlMRQfDyD4B85/view?usp=sharing)
 
 ## Antes de empezar...
 
@@ -114,7 +114,7 @@ Gracias a GetIt, las dependencias se resuelven automáticamente en los construct
 Contiene toda la capa visual: **Widgets, Views, Screens y BLoCs**.  
 Cada feature mantiene su propio estado mediante su respectivo BLoC.
 
-> El uso de DDD permite que ChatIA, aún siendo un MVP (v0.0.1), tenga una base sólida, modular y preparada para escalar con nuevas funcionalidades.
+> El uso de DDD permite que ChatIA, aún siendo un MVP (v0.0.2), tenga una base sólida, modular y preparada para escalar con nuevas funcionalidades.
 
 ---
 

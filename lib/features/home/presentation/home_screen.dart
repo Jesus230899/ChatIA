@@ -322,7 +322,7 @@ class HomeScreen extends StatelessWidget {
         const SizedBox(height: 30),
         CustomButtonWidget(onPressed: _sendEmail, text: 'Contactar por correo'),
         const SizedBox(height: 20),
-        CustomButtonWidget(onPressed: _launchUrl, text: 'Ver mi LinedIn'),
+        CustomButtonWidget(onPressed: _launchUrl, text: 'Ver mi LinkedIn'),
       ],
     );
   }
