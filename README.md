@@ -35,8 +35,9 @@ flutter pub get
 ```shell
 flutter packages pub run build_runner build --delete-conflicting-outputs
 ```
+4. Coloca el archivo .env en la raiz del proyecto, este archivo fue enviado por correo electrónico. En caso de no encontrarse por favor ponte en contacto conmigo.
 
-4. Corre la app:
+5. Corre la app:
 
 ```shell
 flutter run
